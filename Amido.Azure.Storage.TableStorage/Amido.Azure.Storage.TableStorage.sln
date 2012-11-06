@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amido.Azure.Storage.TableStorage", "Amido.Azure.Storage.TableStorage.csproj", "{A25F4DF5-D632-4438-8DD1-18DB5FE1A9A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amido.Azure.Storage.TableStorage.Tests", "..\Amido.Azure.Storage.TableStorage.Tests\Amido.Azure.Storage.TableStorage.Tests.csproj", "{41002B91-48F5-4BC2-A695-5425955CEE25}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{43C327F0-123B-4146-A869-A4C8D71232D8}"
+	ProjectSection(SolutionItems) = preProject
+		Amido.Azure.Storage.TableStorage.vsmdi = Amido.Azure.Storage.TableStorage.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = Amido.Azure.Storage.TableStorage.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A25F4DF5-D632-4438-8DD1-18DB5FE1A9A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A25F4DF5-D632-4438-8DD1-18DB5FE1A9A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A25F4DF5-D632-4438-8DD1-18DB5FE1A9A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A25F4DF5-D632-4438-8DD1-18DB5FE1A9A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41002B91-48F5-4BC2-A695-5425955CEE25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41002B91-48F5-4BC2-A695-5425955CEE25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41002B91-48F5-4BC2-A695-5425955CEE25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41002B91-48F5-4BC2-A695-5425955CEE25}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
