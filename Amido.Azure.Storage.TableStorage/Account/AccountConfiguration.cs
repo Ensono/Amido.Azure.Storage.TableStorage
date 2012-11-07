@@ -4,22 +4,18 @@ namespace Amido.Azure.Storage.TableStorage.Account
 {
     public class AccountConfiguration<TEntity> where TEntity : TableServiceEntity
     {
-        private string tableName;
-
-        public string AccountName { get; set; }
-
-        public string TableName
+        public AccountConfiguration(string accountName) : this(accountName, typeof(TEntity).Name)
         {
-            get
-            {
-                if (string.IsNullOrEmpty(tableName))
-                {
-                    return typeof(TEntity).Name;
-                }
-
-                return tableName;
-            }
-            set { tableName = value; }
         }
+
+        public AccountConfiguration(string accountName, string tableName)
+        {
+            AccountName = accountName;
+            TableName = tableName;
+        }
+
+        public string AccountName { get; private set; }
+
+        public string TableName { get; private set; }
     }
 }

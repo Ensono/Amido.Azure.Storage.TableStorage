@@ -4,22 +4,18 @@ namespace Amido.Azure.Storage.TableStorage.Account
 {
     public class AccountConnection<TEntity> where TEntity : TableServiceEntity
     {
-        private string tableName;
-
-        public string ConnectionString { get; set; }
-
-        public string TableName
+        public AccountConnection(string connectionString) : this(connectionString, typeof(TEntity).Name)
         {
-            get
-            {
-                if (string.IsNullOrEmpty(tableName))
-                {
-                    return typeof (TEntity).Name;
-                }
-
-                return tableName;
-            }
-            set { tableName = value; }
         }
+
+        public AccountConnection(string connectionString, string tableName)
+        {
+            ConnectionString = connectionString;
+            TableName = tableName;
+        }
+
+        public string ConnectionString { get; private set; }
+
+        public string TableName { get; private set; }
     }
 }

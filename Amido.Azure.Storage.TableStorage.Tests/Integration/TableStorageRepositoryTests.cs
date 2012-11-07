@@ -23,10 +23,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 throw new ApplicationException("Unable to start storage emulator.");
             }
 
-            var accountConnection = new AccountConnection<TestEntity>
-            {
-                ConnectionString = Properties.Resources.AccountConnectionString
-            };
+            var accountConnection = new AccountConnection<TestEntity>(Properties.Resources.AccountConnectionString);
 
             repository = new TableStorageRepository<TestEntity>(accountConnection);
             ((ITableStorageAdminRepository)repository).CreateTableIfNotExists();
