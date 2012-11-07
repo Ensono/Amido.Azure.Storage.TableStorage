@@ -1,4 +1,7 @@
-﻿using Amido.Azure.Storage.TableStorage.Paging;
+﻿using System;
+using System.Linq;
+using System.Linq.Expressions;
+using Amido.Azure.Storage.TableStorage.Paging;
 using Amido.Azure.Storage.TableStorage.Queries;
 using Microsoft.WindowsAzure.StorageClient;
 
@@ -33,5 +36,9 @@ namespace Amido.Azure.Storage.TableStorage
         PagedResults<TEntity> ListByPartitionKey(string partitionKey);
 
         PagedResults<TEntity> ListAll();
+
+        IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression);
+
+        IQueryable<TEntity> Find(Query<TEntity> query);
     }
 }

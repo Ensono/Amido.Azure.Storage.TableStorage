@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Data.Services.Client;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Xml.Serialization;
+using Amido.Azure.Storage.TableStorage.Account;
 using Amido.Azure.Storage.TableStorage.Paging;
 using Amido.Azure.Storage.TableStorage.Queries;
 using Amido.Azure.Storage.TableStorage.Serialization;
@@ -15,13 +17,13 @@ namespace Amido.Azure.Storage.TableStorage
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
 
-        public TableStorageRepository(string accountConnectionString)
-            : this(GetCloudStorageAccount(accountConnectionString), typeof(TEntity).Name)
+        public TableStorageRepository(AccountConfiguration<TEntity> accountConfiguration)
+            : this(GetCloudStorageAccountByConfigurationSetting(accountConfiguration.AccountName), accountConfiguration.TableName)
         {
         }
 
-        public TableStorageRepository(string accountConnectionString, string tableName)
-            : this(GetCloudStorageAccount(accountConnectionString), tableName)
+        public TableStorageRepository(AccountConnection<TEntity> accountConnection)
+            : this(GetCloudStorageAccountByConnectionString(accountConnection.ConnectionString), accountConnection.TableName)
         {
         }
 
@@ -66,6 +68,16 @@ namespace Amido.Azure.Storage.TableStorage
         public PagedResults<TEntity> ListAll()
         {
             return Query(new ListAllQuery<TEntity>());
+        }
+
+        public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
+        {
+            return CreateQuery<TEntity>(tableName).Where(expression);
+        }
+
+        public IQueryable<TEntity> Find(Query<TEntity> query)
+        {
+            return query.Execute(CreateQuery<TEntity>(tableName));
         }
 
         public virtual void Add(TEntity entity)
@@ -138,11 +150,23 @@ namespace Amido.Azure.Storage.TableStorage
             return pagedResults;
         }
 
-        protected static CloudStorageAccount GetCloudStorageAccount(string storageConnectionString)
+        protected static CloudStorageAccount GetCloudStorageAccountByConnectionString(string storageConnectionString)
         {
             try
             {
                 return CloudStorageAccount.Parse(storageConnectionString);
+            }
+            catch (Exception error)
+            {
+                throw new InvalidOperationException("Unable to find cloud storage account", error);
+            }
+        }
+
+        protected static CloudStorageAccount GetCloudStorageAccountByConfigurationSetting(string configurationSetting)
+        {
+            try
+            {
+                return CloudStorageAccount.FromConfigurationSetting(configurationSetting);
             }
             catch (Exception error)
             {

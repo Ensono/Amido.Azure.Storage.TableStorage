@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Amido.Azure.Storage.TableStorage.Account;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Amido.Azure.Storage.TableStorage.Tests.Integration
@@ -22,7 +23,12 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 throw new ApplicationException("Unable to start storage emulator.");
             }
 
-            repository = new TableStorageRepository<TestEntity>(Properties.Resources.AccountConnectionString);
+            var accountConnection = new AccountConnection<TestEntity>
+            {
+                ConnectionString = Properties.Resources.AccountConnectionString
+            };
+
+            repository = new TableStorageRepository<TestEntity>(accountConnection);
             ((ITableStorageAdminRepository)repository).CreateTableIfNotExists();
         }
 
