@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Amido.Azure.Storage.TableStorage</id>
+    <version>1.0.0.0</version>
+    <title>Amido Azure Table Storage Repository</title>
+    <authors>Amido Development Ltd</authors>
+    <owners>Amido Development Ltd</owners>
+    <licenseUrl>http://www.amido.co.uk</licenseUrl>
+    <projectUrl>http://www.amido.co.uk/blog/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides a generic repository to work against Table Storage within Windows Azure.  The repository provides common methods for querying table storage based on custom query commands or by Partition and Row key</description>
+    <releaseNotes>Version 1.0</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>Azure TableStorage</tags>
+  </metadata>
+</package>
