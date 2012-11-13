@@ -42,6 +42,7 @@ namespace Amido.Azure.Storage.TableStorage
             var cloudTableQuery = query.Execute(CreateQuery<TEntity>(tableName)).AsTableServiceQuery();
             var resultContinuation = ResultContinuationSerializer.DeserializeToken(serializer, query.ContinuationTokenString);
             var response = cloudTableQuery.EndExecuteSegmented(cloudTableQuery.BeginExecuteSegmented(resultContinuation, null, null));
+            
             return CreatePagedResults(serializer, response);
         }
 
@@ -60,14 +61,14 @@ namespace Amido.Azure.Storage.TableStorage
             return FirstOrDefault(new GetByPartitionKeyAndRowKeyQuery<TEntity>(partitionKey, rowKey));
         }
 
-        public PagedResults<TEntity> ListByPartitionKey(string partitionKey)
+        public PagedResults<TEntity> ListByPartitionKey(string partitionKey, string continuationToken = null)
         {
-            return Query(new ListByPartitionKeyQuery<TEntity>(partitionKey));
+            return Query(new ListByPartitionKeyQuery<TEntity>(partitionKey) { ContinuationTokenString = continuationToken });
         }
 
-        public PagedResults<TEntity> ListAll()
+        public PagedResults<TEntity> ListAll(string continuationToken = null)
         {
-            return Query(new ListAllQuery<TEntity>());
+            return Query(new ListAllQuery<TEntity> { ContinuationTokenString = continuationToken });
         }
 
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
@@ -146,7 +147,8 @@ namespace Amido.Azure.Storage.TableStorage
         {
             var pagedResults = new PagedResults<TEntity>();
             pagedResults.Results.AddRange(response.Results);
-            pagedResults.ContinuationToken = ResultContinuationSerializer.SerializeToken(serializer, response.ContinuationToken);
+            pagedResults.ContinuationToken = response.ContinuationToken == null ? null :  ResultContinuationSerializer.SerializeToken(serializer, response.ContinuationToken);
+            pagedResults.HasMoreResults = response.ContinuationToken != null;
             return pagedResults;
         }
 

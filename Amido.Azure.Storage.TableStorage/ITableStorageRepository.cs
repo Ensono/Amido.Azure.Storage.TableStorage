@@ -33,9 +33,9 @@ namespace Amido.Azure.Storage.TableStorage
 
         TEntity GetByPartitionKeyAndRowKey(string partitionKey, string rowKey);
 
-        PagedResults<TEntity> ListByPartitionKey(string partitionKey);
+        PagedResults<TEntity> ListByPartitionKey(string partitionKey, string continuationToken = null);
 
-        PagedResults<TEntity> ListAll();
+        PagedResults<TEntity> ListAll(string continuationToken = null);
 
         IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression);
 

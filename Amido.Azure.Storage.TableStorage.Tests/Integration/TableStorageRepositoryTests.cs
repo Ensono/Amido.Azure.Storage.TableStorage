@@ -109,6 +109,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.IsNotNull(results);
                 Assert.AreEqual(5, results.Results.Count);
                 Assert.IsNotNull(results.ContinuationToken);
+                Assert.IsTrue(results.HasMoreResults);
                 Assert.IsTrue(results.ContinuationToken.Contains("ResultContinuation"));
                 Assert.IsTrue(results.ContinuationToken.Contains("Table"));
                 Assert.IsTrue(results.ContinuationToken.Contains("NextPartitionKey"));
