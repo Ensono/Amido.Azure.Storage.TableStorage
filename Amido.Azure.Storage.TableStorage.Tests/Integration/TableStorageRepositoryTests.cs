@@ -267,7 +267,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 }
 
                 // Act
-                var result = Repository.ListByPartitionKey("PartitionKey8");
+                var result = Repository.ListByPartitionKey("PartitionKey8", 5);
 
                 // Assert
                 Assert.IsNotNull(result);

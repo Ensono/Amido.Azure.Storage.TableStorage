@@ -35,7 +35,11 @@ namespace Amido.Azure.Storage.TableStorage
 
         PagedResults<TEntity> ListByPartitionKey(string partitionKey, string continuationToken = null);
 
+        PagedResults<TEntity> ListByPartitionKey(string partitionKey, int resultPerPage, string continuationToken = null);
+
         PagedResults<TEntity> ListAll(string continuationToken = null);
+
+        PagedResults<TEntity> ListAll(int resultPerPage, string continuationToken = null);
 
         IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression);
 

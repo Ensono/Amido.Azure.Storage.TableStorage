@@ -66,9 +66,19 @@ namespace Amido.Azure.Storage.TableStorage
             return Query(new ListByPartitionKeyQuery<TEntity>(partitionKey) { ContinuationTokenString = continuationToken });
         }
 
+        public PagedResults<TEntity> ListByPartitionKey(string partitionKey, int resultsPerPage, string continuationToken = null)
+        {
+            return Query(new ListByPartitionKeyQuery<TEntity>(partitionKey, resultsPerPage) { ContinuationTokenString = continuationToken });
+        }
+
         public PagedResults<TEntity> ListAll(string continuationToken = null)
         {
             return Query(new ListAllQuery<TEntity> { ContinuationTokenString = continuationToken });
+        }
+
+        public PagedResults<TEntity> ListAll(int resultsPerPage, string continuationToken = null)
+        {
+            return Query(new ListAllQuery<TEntity>(resultsPerPage) { ContinuationTokenString = continuationToken });
         }
 
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
