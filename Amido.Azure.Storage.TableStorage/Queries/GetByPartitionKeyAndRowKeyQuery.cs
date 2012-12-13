@@ -16,6 +16,12 @@ namespace Amido.Azure.Storage.TableStorage.Queries
 
         public override IQueryable<TEntity> Execute(IQueryable<TEntity> query)
         {
+            return Execute(query, 0);
+        }
+
+        public override IQueryable<TEntity> Execute(IQueryable<TEntity> query, int resultsPerPage)
+        {
+            //use of results per page is irrelevant in this query, so just ignore and return result.
             return query.Where(x => x.PartitionKey == partitionKey && x.RowKey == rowKey);
         }
     }

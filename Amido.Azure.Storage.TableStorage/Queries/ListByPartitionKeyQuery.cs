@@ -6,19 +6,18 @@ namespace Amido.Azure.Storage.TableStorage.Queries
     internal class ListByPartitionKeyQuery<TEntity> : Query<TEntity> where TEntity : TableServiceEntity
     {
         private readonly string partitionKey;
-        private readonly int resultsPerPage;
 
-        public ListByPartitionKeyQuery(string partitionKey) : this(partitionKey, 0)
-        {
-        }
-
-        public ListByPartitionKeyQuery(string partitionKey, int resultsPerPage)
+        public ListByPartitionKeyQuery(string partitionKey)
         {
             this.partitionKey = partitionKey;
-            this.resultsPerPage = resultsPerPage;
         }
 
         public override IQueryable<TEntity> Execute(IQueryable<TEntity> query)
+        {
+            return Execute(query, 0);
+        }
+
+        public override IQueryable<TEntity> Execute(IQueryable<TEntity> query, int resultsPerPage)
         {
             query = query.Where(x => x.PartitionKey == partitionKey);
 

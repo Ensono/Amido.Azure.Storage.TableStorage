@@ -41,15 +41,15 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services.Client" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Account\AccountConfiguration.cs" />
     <Compile Include="Account\AccountConnection.cs" />
+    <Compile Include="Dbc\Contract.cs" />
+    <Compile Include="Dbc\ContractAssertionException.cs" />
+    <Compile Include="Dbc\PostconditionException.cs" />
+    <Compile Include="Dbc\PreconditionException.cs" />
     <Compile Include="Serialization\ResultContinuationSerializer.cs" />
     <Compile Include="ITableStorageAdminRepository.cs" />
     <Compile Include="ITableStorageRepository.cs" />

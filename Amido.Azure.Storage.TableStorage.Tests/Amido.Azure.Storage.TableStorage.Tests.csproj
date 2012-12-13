@@ -47,8 +47,10 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dbc\ContractTests.cs" />
     <Compile Include="Integration\TableStorageRepositoryTests.cs" />
     <Compile Include="Integration\TestEntity.cs" />
+    <Compile Include="Integration\AccountConnectionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
