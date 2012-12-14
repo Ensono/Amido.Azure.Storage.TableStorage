@@ -6,3 +6,5 @@ _ReSharper.Amido.Azure.Storage.TableStorage
 # mstest test results
 TestResults
 *.dat
+*.suo
+*.user
