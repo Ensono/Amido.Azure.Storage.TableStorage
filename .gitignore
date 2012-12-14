@@ -8,3 +8,4 @@ TestResults
 *.dat
 *.suo
 *.user
+_ReSharper.Amido.Azure.Storage.TableStorage

@@ -56,7 +56,6 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 }
             }
 
-            // ReSharper disable InconsistentNaming
             [TestMethod]
             [ExpectedException(typeof(PreconditionException))]
             public void Should_Throw_PreconditionException() 
@@ -161,13 +160,11 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                     Assert.IsTrue(!firstResults.Results.Contains(secondResult));
                 }
             }
-            // ReSharper restore InconsistentNaming
         }
 
         [TestClass]
         public class FirstOrDefault : TableStorageRepositoryTests
         {
-            // ReSharper disable InconsistentNaming
             [TestMethod]
             [ExpectedException(typeof(PreconditionException))]
             public void Should_Throw_PreconditionException() {
@@ -222,13 +219,11 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.IsNotNull(result);
                 Assert.AreEqual("PartitionKey1", result.PartitionKey);
             }
-            // ReSharper restore InconsistentNaming
         }
 
         [TestClass]
         public class First : TableStorageRepositoryTests
         {
-            // ReSharper disable InconsistentNaming
             [TestMethod, ExpectedException(typeof(InvalidOperationException))]
             public void Should_Throw_Exception_When_No_Data_Is_Returned()
             {
@@ -280,13 +275,11 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.IsNotNull(result);
                 Assert.AreEqual("PartitionKey1", result.PartitionKey);
             }
-            // ReSharper restore InconsistentNaming
         }
 
         [TestClass]
         public class GetByPartitionKeyAndRowKey : TableStorageRepositoryTests
         {
-            // ReSharper disable InconsistentNaming
             [TestMethod]
             [ExpectedException(typeof(PreconditionException))]
             public void Should_Throw_PreconditionException_If_PartionKey_Null() 
@@ -337,13 +330,11 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.AreEqual("PartitionKey1", result.PartitionKey);
                 Assert.AreEqual("RowKey45", result.RowKey);
             }
-            // ReSharper restore InconsistentNaming
         }
 
         [TestClass]
         public class ListByPartitionKey : TableStorageRepositoryTests
         {
-            // ReSharper disable InconsistentNaming
             [TestMethod]
             [ExpectedException(typeof(PreconditionException))]
             public void Should_Throw_PreconditionException_If_PartiionKey_Null() 
@@ -437,13 +428,11 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.IsFalse(string.IsNullOrWhiteSpace(result.ContinuationToken));
                 Assert.IsTrue(result.Results.All(x => x.PartitionKey == partiionKey));
             }
-            // ReSharper restore InconsistentNaming
         }
 
         [TestClass]
         public class ListAll : TableStorageRepositoryTests
         {
-            // ReSharper disable InconsistentNaming
             [TestMethod]
             [ExpectedException(typeof(PreconditionException))]
             public void Should_Throw_PreconditionException_Invalid_ResultPerPage() {
@@ -595,13 +584,11 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.IsFalse(result.HasMoreResults);
                 Assert.IsTrue(string.IsNullOrWhiteSpace(result.ContinuationToken));
             }
-            // ReSharper restore InconsistentNaming
         }
 
         [TestClass]
         public class Find : TableStorageRepositoryTests
         {
-            // ReSharper disable InconsistentNaming
             [TestMethod]
             [ExpectedException(typeof(PreconditionException))]
             public void Should_Throw_PreconditionException_If_Query_Null() 
@@ -745,13 +732,11 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.IsNotNull(results);
                 Assert.AreEqual(5, results.Count);
             }
-            // ReSharper restore InconsistentNaming
         }
 
         [TestClass]
         public class Delete : TableStorageRepositoryTests 
         {
-            // ReSharper disable InconsistentNaming
             [TestMethod]
             [ExpectedException(typeof(PreconditionException))]
             public void Should_Throw_PreconditionException_If_Entity_Null() 
@@ -791,20 +776,18 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 // Assert
                 Assert.IsNull(result);
             }
-            // ReSharper restore InconsistentNaming
         }
 
         [TestClass]
         public class Update : TableStorageRepositoryTests 
         {
-            // ReSharper disable InconsistentNaming
             [TestMethod]
             public void Should_Update_Entity_If_Present() 
             {
                 // Arrange
                 for(var i = 0; i < 1; i++) {
                     for(var j = 0; j < 10; j++) {
-                        Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
+                        Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j) {TestValue = "Created"});
                     }
                     Repository.SaveBatch();
                 }
@@ -817,13 +800,10 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.AreEqual("PartitionKey0", result.PartitionKey);
                 Assert.AreEqual("RowKey1", result.RowKey);
 
-                var current = result.Timestamp;
-
-                //Force a short time diff
-                Thread.Sleep(2000);
+                var current = result.TestValue;
 
                 // Act
-                result.Timestamp = DateTime.MinValue; //force an update
+                result.TestValue = "Updated";
                 Repository.Update(result);
                 Repository.SaveAndReplaceOnUpdate();
 
@@ -831,9 +811,9 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
 
                 // Assert
                 Assert.IsNotNull(result);
-                Assert.AreNotEqual(result.Timestamp, current);
+                Assert.IsTrue(result.TestValue == "Updated");
+                Assert.AreNotEqual(result.TestValue, current);
             }
-            // ReSharper restore InconsistentNaming
         }
     }
 }

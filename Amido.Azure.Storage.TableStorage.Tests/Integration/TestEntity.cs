@@ -7,5 +7,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public TestEntity(string partitionKey, string rowKey) : base(partitionKey, rowKey)
         {
         }
+
+        public string TestValue { get; set; }
     }
 }
