@@ -337,7 +337,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         {
             [TestMethod]
             [ExpectedException(typeof(PreconditionException))]
-            public void Should_Throw_PreconditionException_If_PartiionKey_Null() 
+            public void Should_Throw_PreconditionException_If_PartitionKey_Null() 
             {
                 // Act
                 var result = Repository.ListByPartitionKey(null);
@@ -427,6 +427,51 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
                 Assert.IsTrue(result.HasMoreResults);
                 Assert.IsFalse(string.IsNullOrWhiteSpace(result.ContinuationToken));
                 Assert.IsTrue(result.Results.All(x => x.PartitionKey == partiionKey));
+            }
+        }
+
+        [TestClass]
+        public class ListAllByPartitionKey : TableStorageRepositoryTests
+        {
+            [TestMethod]
+            [ExpectedException(typeof(PreconditionException))]
+            public void Should_Throw_PreconditionException_If_PartitionKey_Null()
+            {
+                // Act
+                var result = ((IWantItAll<TestEntity>)Repository).ListAllByPartitionKey(null);
+
+                // Assert
+                Assert.IsNull(result);
+            }
+
+            [TestMethod]
+            public void Should_Return_Empty_List_When_Partition_Key_Does_Not_Have_Rows()
+            {
+                // Act
+                var result = ((IWantItAll<TestEntity>)Repository).ListAllByPartitionKey(Guid.NewGuid().ToString());
+
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(0, result.Count);
+            }
+
+            [TestMethod]
+            public void Should_Return_Valid_Rows()
+            {
+                // Arrange
+                for (var i = 0; i < 1001; i++)
+                {
+                    Repository.Add(new TestEntity("PartitionKey1", "RowKey" + i));
+                    Repository.SaveBatch();
+                }
+
+                // Act
+                var results = ((IWantItAll<TestEntity>)Repository).ListAllByPartitionKey("PartitionKey1");
+
+                // Assert
+                Assert.IsNotNull(results);
+                Assert.AreEqual(1001, results.Count);
+                Assert.IsTrue(results.All(x => x.PartitionKey == "PartitionKey1"));
             }
         }
 

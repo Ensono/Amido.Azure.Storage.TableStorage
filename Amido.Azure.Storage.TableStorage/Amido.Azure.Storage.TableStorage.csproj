@@ -50,6 +50,7 @@
     <Compile Include="Dbc\ContractAssertionException.cs" />
     <Compile Include="Dbc\PostconditionException.cs" />
     <Compile Include="Dbc\PreconditionException.cs" />
+    <Compile Include="IWantItAll.cs" />
     <Compile Include="Serialization\ResultContinuationSerializer.cs" />
     <Compile Include="ITableStorageAdminRepository.cs" />
     <Compile Include="ITableStorageRepository.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Services.Client;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,7 +18,7 @@ namespace Amido.Azure.Storage.TableStorage
     /// Class TableStorageRepository
     /// </summary>
     /// <typeparam name="TEntity">The type of the T entity.</typeparam>
-    public class TableStorageRepository<TEntity> : TableServiceContext, ITableStorageRepository<TEntity>, ITableStorageAdminRepository where TEntity : TableServiceEntity
+    public class TableStorageRepository<TEntity> : TableServiceContext, ITableStorageRepository<TEntity>, ITableStorageAdminRepository, IWantItAll<TEntity> where TEntity : TableServiceEntity
     {
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
@@ -157,6 +158,25 @@ namespace Amido.Azure.Storage.TableStorage
         }
 
         /// <summary>
+        /// Lists all entities within a particular partition. Caution: This method will retrieve ALL entities unpaged.
+        /// </summary>
+        /// <param name="partitionKey">The partition key.</param>
+        /// <returns>A list of entities.</returns>
+        public List<TEntity> ListAllByPartitionKey(string partitionKey)
+        {
+            string continuationToken = null;
+            var entities = new List<TEntity>();
+            do
+            {
+                var pagedResults = ListByPartitionKey(partitionKey, continuationToken);
+                continuationToken = pagedResults.ContinuationToken;
+                entities.AddRange(pagedResults.Results);
+            } while (continuationToken != null);
+
+            return entities;
+        }
+
+        /// <summary>
         /// Returns a paged list of results. If a continuationToken is passed, it will return the next page of results.
         /// </summary>
         /// <param name="continuationToken">The continuation token.</param>
@@ -170,7 +190,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// Returns a paged list of results. The number of results returned can be constrained by passing a value for resultsPerPage.
         /// If a continuationToken is passed, it will return the next page of results.
         /// </summary>
-        /// <param name="resultPerPage">The result per page.</param>
+        /// <param name="resultsPerPage">The result per page.</param>
         /// <param name="continuationToken">The continuation token.</param>
         /// <returns>PagedResults{TEntity}.</returns>
         /// <exception cref="PreconditionException">If resultsPerPage is less than one.</exception>
