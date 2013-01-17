@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Account\AccountConfiguration.cs" />
     <Compile Include="Account\AccountConnection.cs" />
+    <Compile Include="Account\AccountStorageCredentials.cs" />
     <Compile Include="Dbc\Contract.cs" />
     <Compile Include="Dbc\ContractAssertionException.cs" />
     <Compile Include="Dbc\PostconditionException.cs" />

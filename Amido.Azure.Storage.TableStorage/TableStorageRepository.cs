@@ -44,6 +44,15 @@ namespace Amido.Azure.Storage.TableStorage
         /// <summary>
         /// Initializes a new instance of the <see cref="TableStorageRepository{TEntity}" /> class.
         /// </summary>
+        /// <param name="accountStorageCredentials">The account storage credentials.</param>
+        public TableStorageRepository(AccountStorageCredentials<TEntity> accountStorageCredentials)
+            : this(GetCloudStorageAccountByStorageCredentials(accountStorageCredentials), accountStorageCredentials.TableName)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TableStorageRepository{TEntity}" /> class.
+        /// </summary>
         /// <param name="cloudStorageAccount">The cloud storage account.</param>
         /// <param name="tableName">Name of the table.</param>
         protected TableStorageRepository(CloudStorageAccount cloudStorageAccount, string tableName)
@@ -369,6 +378,22 @@ namespace Amido.Azure.Storage.TableStorage
             try
             {
                 return CloudStorageAccount.FromConfigurationSetting(configurationSetting);
+            }
+            catch (Exception error)
+            {
+                throw new InvalidOperationException("Unable to find cloud storage account", error);
+            }
+        }
+
+        public static CloudStorageAccount GetCloudStorageAccountByStorageCredentials(AccountStorageCredentials<TEntity> accountStorageCredentials)
+        {
+            Contract.Assert(!string.IsNullOrEmpty(accountStorageCredentials.AccountName));
+
+            try
+            {
+                return new CloudStorageAccount(
+                    new StorageCredentialsAccountAndKey(
+                        accountStorageCredentials.AccountName, accountStorageCredentials.AccountKey), accountStorageCredentials.UseHttps);
             }
             catch (Exception error)
             {
