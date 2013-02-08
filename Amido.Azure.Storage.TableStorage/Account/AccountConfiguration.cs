@@ -1,12 +1,12 @@
-using Microsoft.WindowsAzure.StorageClient;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Amido.Azure.Storage.TableStorage.Account
 {
     /// <summary>
     /// /// Class that represents a connection to a Windows Azure table repository based upon an account name.
     /// </summary>
-    /// <typeparam name="TEntity">The type of the entity, constrained to be of type <see cref="TableServiceEntity"/>.</typeparam>
-    public class AccountConfiguration<TEntity> where TEntity : TableServiceEntity
+    /// <typeparam name="TEntity">The type of the entity, constrained to be of type <see cref="TableEntity"/>.</typeparam>
+    public class AccountConfiguration<TEntity> where TEntity : TableEntity
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountConfiguration{TEntity}" /> class.

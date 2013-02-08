@@ -1,5 +1,4 @@
-﻿using System;
-using Amido.Azure.Storage.TableStorage.Account;
+﻿using Amido.Azure.Storage.TableStorage.Account;
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

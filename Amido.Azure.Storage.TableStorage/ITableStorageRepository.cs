@@ -3,8 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Amido.Azure.Storage.TableStorage.Paging;
-using Amido.Azure.Storage.TableStorage.Queries;
-using Microsoft.WindowsAzure.StorageClient;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Amido.Azure.Storage.TableStorage
 {
@@ -12,7 +11,7 @@ namespace Amido.Azure.Storage.TableStorage
     /// Interface ITableStorageRepository
     /// </summary>
     /// <typeparam name="TEntity">The type of the T entity.</typeparam>
-    public interface ITableStorageRepository<TEntity> where TEntity : TableServiceEntity
+    public interface ITableStorageRepository<TEntity> where TEntity : ITableEntity, new()
     {
         /// <summary>
         /// Adds the specified entity.
@@ -61,21 +60,23 @@ namespace Amido.Azure.Storage.TableStorage
         void SaveAndReplaceOnUpdate();
 
         /// <summary>
-        /// Queries against a table and returns a <see cref="PagedResults{TEntity}"/> of results.
+        /// Queries against a table and returns a <see cref="PagedResults{TEntity}" /> of results.
         /// </summary>
         /// <param name="query">The query.</param>
+        /// <param name="continuationToken">The continuation token.</param>
         /// <returns>PagedResults{`0}.</returns>
         /// <exception cref="PreconditionException">If query object is null.</exception>
-        PagedResults<TEntity> Query(Query<TEntity> query);
+        PagedResults<TEntity> Query(TableQuery<TEntity> query, string continuationToken = null);
 
         /// <summary>
         /// Queries against a table and returns a <see cref="PagedResults{TEntity}" /> of results.
         /// </summary>
         /// <param name="query">The query.</param>
         /// <param name="resultsPerPage">The results per page.</param>
+        /// <param name="continuationToken">The continuation token.</param>
         /// <returns>PagedResults{`0}.</returns>
         /// <exception cref="PreconditionException">If query object is null.</exception>
-        PagedResults<TEntity> Query(Query<TEntity> query, int resultsPerPage);
+        PagedResults<TEntity> Query(TableQuery<TEntity> query, int resultsPerPage, string continuationToken = null);
 
         /// <summary>
         /// Returns the first item matching the query, or null of none found.
@@ -83,7 +84,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// <param name="query">The query.</param>
         /// <returns>The first item found or null if none.</returns>
         /// <exception cref="PreconditionException">If query object is null.</exception>
-        TEntity FirstOrDefault(Query<TEntity> query);
+        TEntity FirstOrDefault(TableQuery<TEntity> query);
 
         /// <summary>
         /// Returns the first item matching the query.
@@ -92,7 +93,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// <returns>The first item found.</returns>
         /// <exception cref="PreconditionException">If query object is null.</exception>
         /// <exception cref="InvalidOperationException">If not result are found matching the query.</exception>
-        TEntity First(Query<TEntity> query);
+        TEntity First(TableQuery<TEntity> query);
 
         /// <summary>
         /// Returns an entity based upon partition key and row key.
@@ -149,7 +150,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="query">The query.</param>
         /// <returns>IQueryable{TEntity}.</returns>
-        IQueryable<TEntity> Find(Query<TEntity> query);
+        IQueryable<TEntity> Find(TableQuery<TEntity> query);
 
         /// <summary>
         /// Finds results based upon a given <see cref="Query{TEntity}"/> instance. Results can be limited by specifying the resultsPerPage to return.
@@ -157,6 +158,6 @@ namespace Amido.Azure.Storage.TableStorage
         /// <param name="query">The query.</param>
         /// <param name="resultsPerPage">The results per page.</param>
         /// <returns>IQueryable{TEntity}.</returns>
-        IQueryable<TEntity> Find(Query<TEntity> query, int resultsPerPage);
+        IQueryable<TEntity> Find(TableQuery<TEntity> query, int resultsPerPage);
     }
 }
