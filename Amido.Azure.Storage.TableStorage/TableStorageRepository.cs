@@ -309,7 +309,7 @@ namespace Amido.Azure.Storage.TableStorage
         }
 
         /// <summary>
-        /// Saves any changes made to the table in question.
+        /// Saves any pending changes. Calls SaveChangesWithRetries passing SaveChangesOptions.Batch.
         /// </summary>
         public void SaveBatch()
         {
@@ -317,11 +317,20 @@ namespace Amido.Azure.Storage.TableStorage
         }
 
         /// <summary>
-        /// Saves the and replace on update.
+        /// Saves any pending changes. Calls SaveChangesWithRetries passing SaveChangesOptions.ReplaceOnUpdate.
         /// </summary>
         public void SaveAndReplaceOnUpdate()
         {
             SaveChangesWithRetries(SaveChangesOptions.ReplaceOnUpdate);
+        }
+
+        /// <summary>
+        /// Saves any pending changes. Calls SaveChangesWithRetries without passing any SaveChangesOptions.
+        /// </summary>
+        /// <remarks>Best used after calling a delete.</remarks>
+        public void Save()
+        {
+            SaveChangesWithRetries();
         }
 
         /// <summary>

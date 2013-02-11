@@ -51,14 +51,20 @@ namespace Amido.Azure.Storage.TableStorage
         void Delete(TEntity entity);
 
         /// <summary>
-        /// Saves the batch.
+        /// Saves any pending changes. Calls SaveChangesWithRetries passing SaveChangesOptions.Batch.
         /// </summary>
         void SaveBatch();
 
         /// <summary>
-        /// Saves the and replace on update.
+        /// Saves any pending changes. Calls SaveChangesWithRetries passing SaveChangesOptions.ReplaceOnUpdate.
         /// </summary>
         void SaveAndReplaceOnUpdate();
+
+        /// <summary>
+        /// Saves any pending changes. Calls SaveChangesWithRetries without passing any SaveChangesOptions.
+        /// </summary>
+        /// <remarks>Best used after calling a delete.</remarks>
+        void Save();
 
         /// <summary>
         /// Queries against a table and returns a <see cref="PagedResults{TEntity}"/> of results.
