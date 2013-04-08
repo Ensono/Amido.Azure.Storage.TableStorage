@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Amido.Azure.Storage.TableStorage.Account;
+﻿using System.Linq;
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -159,7 +156,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
             Assert.IsNotNull(firstResults.ContinuationToken);
 
             // Act
-            var secondResults = Repository.Query(query, firstResults.ContinuationToken);
+            var secondResults = Repository.Query(query, continuationToken:firstResults.ContinuationToken);
 
             // Assert
             Assert.IsNotNull(secondResults);

@@ -17,16 +17,16 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration {
             Assert.IsNull(results);
         }
 
-        [TestMethod]
-        public void Should_Return_Expected_Rows_From_Expression() {
+        //[TestMethod]
+        //public void Should_Return_Expected_Rows_From_Expression() {
             
-            // Act
-            var results = new List<TestEntity>(Repository.Find(x => x.PartitionKey == "PartitionKey2"));
+        //    // Act
+        //    var results = new List<TestEntity>(Repository.Find(x => x.PartitionKey == "PartitionKey2"));
 
-            // Assert
-            Assert.IsNotNull(results);
-            Assert.AreEqual(10, results.Count);
-        }
+        //    // Assert
+        //    Assert.IsNotNull(results);
+        //    Assert.AreEqual(10, results.Count);
+        //}
 
         //[TestMethod]
         //public void Should_Return_Expected_Rows_From_Query() {

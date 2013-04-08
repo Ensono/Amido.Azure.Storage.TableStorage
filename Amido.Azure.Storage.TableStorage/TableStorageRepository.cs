@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Data.Services.Client;
 using System.Linq;
 using System.Linq.Expressions;
 using Amido.Azure.Storage.TableStorage.Account;
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Amido.Azure.Storage.TableStorage.Paging;
 using Amido.Azure.Storage.TableStorage.Serialization;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Amido.Azure.Storage.TableStorage
@@ -15,18 +16,21 @@ namespace Amido.Azure.Storage.TableStorage
     /// Class TableStorageRepository
     /// </summary>
     /// <typeparam name="TEntity">The type of the T entity.</typeparam>
-    public class TableStorageRepository<TEntity> : TableEntity, ITableStorageRepository<TEntity>, ITableStorageAdminRepository where TEntity : ITableEntity, new()
+    public class TableStorageRepository<TEntity> : TableEntity, ITableStorageRepository<TEntity>, ITableStorageAdminRepository, IDisposable where TEntity : class, ITableEntity, new()
     {
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
+        private readonly Lazy<BatchWriter<TEntity>> batchWriter;
+        private bool disposed;
 
-        ///// <summary>
-        ///// Initializes a new instance of the <see cref="TableStorageRepository{TEntity}" /> class.
-        ///// </summary>
-        ///// <param name="accountConfiguration">The account configuration.</param>
-        //public TableStorageRepository(AccountConfiguration<TEntity> accountConfiguration)
-        //    : this(GetCloudStorageAccountByConfigurationSetting(accountConfiguration.AccountName), accountConfiguration.TableName) {
-        //}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TableStorageRepository{TEntity}" /> class.
+        /// </summary>
+        /// <param name="accountConfiguration">The account configuration.</param>
+        public TableStorageRepository(AccountConfiguration<TEntity> accountConfiguration)
+            : this(GetCloudStorageAccountByConfigurationSetting(accountConfiguration.AccountName), accountConfiguration.TableName) 
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableStorageRepository{TEntity}" /> class.
@@ -45,17 +49,40 @@ namespace Amido.Azure.Storage.TableStorage
         protected TableStorageRepository(CloudStorageAccount cloudStorageAccount, string tableName)
             : base(cloudStorageAccount.TableEndpoint.AbsoluteUri, cloudStorageAccount.Credentials.AccountName)
         {
-            cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
             this.tableName = tableName;
-            //MergeOption = MergeOption.PreserveChanges;
-            //IgnoreResourceNotFoundException = true;
+            cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
+            batchWriter = new Lazy<BatchWriter<TEntity>>(() => new BatchWriter<TEntity>(cloudStorageAccount, tableName));
         }
 
+        /// <summary>
+        /// Returns an instance of the <see cref="BatchWriter"/> class.  This should be used
+        /// when performing batch operations.
+        /// </summary>
+        public BatchWriter<TEntity> BatchWriter 
+        {
+            get { return batchWriter.Value; }
+        }
+
+        /// <summary>
+        /// Returns a reference to table.
+        /// </summary>
+        public CloudTable Table
+        {
+            get
+            {
+                return cloudTableClient == null ? null : cloudTableClient.GetTableReference(tableName);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="continuationToken"></param>
+        /// <returns></returns>
         public PagedResults<TEntity> Query(TableQuery<TEntity> query, string continuationToken = null)
         {
-
             Contract.Requires(query != null, "query is null");
-            var table = cloudTableClient.GetTableReference(tableName);
 
             var serializer = new ContinuationTokenSerializer();
 
@@ -63,15 +90,22 @@ namespace Amido.Azure.Storage.TableStorage
                                                ? null
                                                : serializer.DeserializeToken(continuationToken);
 
-            var tableQuerySegment = table.ExecuteQuerySegmented(query, token);
+            var tableQuerySegment = Table.ExecuteQuerySegmented(query, token);
 
             return CreatePagedResults(tableQuerySegment, serializer);
         }
 
-        public PagedResults<TEntity> Query(TableQuery<TEntity> query, int resultsPerPage, string continuationToken = null)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="resultsPerPage"></param>
+        /// <param name="continuationToken"></param>
+        /// <returns></returns>
+        public PagedResults<TEntity> Query(TableQuery<TEntity> query, int resultsPerPage, string continuationToken = null) 
         {
             Contract.Requires(query != null, "query is null");
-            var table = cloudTableClient.GetTableReference(tableName);
+            Contract.Requires(resultsPerPage > 0, "resultsPerPage is zero or less");
 
             var serializer = new ContinuationTokenSerializer();
 
@@ -79,7 +113,7 @@ namespace Amido.Azure.Storage.TableStorage
                                                ? null
                                                : serializer.DeserializeToken(continuationToken);
 
-            var tableQuerySegment = table.ExecuteQuerySegmented(query.Take(resultsPerPage), token);
+            var tableQuerySegment = Table.ExecuteQuerySegmented(query.Take(resultsPerPage), token);
 
             return CreatePagedResults(tableQuerySegment, serializer);
         }
@@ -93,8 +127,7 @@ namespace Amido.Azure.Storage.TableStorage
         public TEntity FirstOrDefault(TableQuery<TEntity> query)
         {
             Contract.Requires(query != null, "query is null.");
-            var table = cloudTableClient.GetTableReference(tableName);
-            return table.ExecuteQuery(query).FirstOrDefault();
+            return Table.ExecuteQuery(query).FirstOrDefault();
         }
 
         /// <summary>
@@ -107,8 +140,7 @@ namespace Amido.Azure.Storage.TableStorage
         public TEntity First(TableQuery<TEntity> query)
         {
             Contract.Requires(query != null, "query is null.");
-            var table = cloudTableClient.GetTableReference(tableName);
-            return table.ExecuteQuery(query).FirstOrDefault();
+            return Table.ExecuteQuery(query).First();
         }
 
         /// <summary>
@@ -123,29 +155,11 @@ namespace Amido.Azure.Storage.TableStorage
             Contract.Requires(!string.IsNullOrWhiteSpace(partitionKey), "partitionKey is null.");
             Contract.Requires(!string.IsNullOrWhiteSpace(rowKey), "rowKey is null.");
             
-            var table = cloudTableClient.GetTableReference(tableName);
-
             var tableOperation = TableOperation.Retrieve<TEntity>(partitionKey, rowKey);
 
-            var specificEntity = (TEntity)table.Execute(tableOperation).Result;
+            var specificEntity = (TEntity)Table.Execute(tableOperation).Result;
 
             return specificEntity;
-        }
-
-        /// <summary>
-        /// Returns a paged list of results based upon a partition key. If a continuationToken is passed, it will return the next page of results.
-        /// </summary>
-        /// <param name="partitionKey">The partition key.</param>
-        /// <param name="continuationToken">The continuation token.</param>
-        /// <returns>PagedResults{TEntity}.</returns>
-        /// <exception cref="PreconditionException">If partitionKey is null or empty.</exception>
-        public PagedResults<TEntity> ListByPartitionKey(string partitionKey, string continuationToken = null)
-        {
-            Contract.Requires(!string.IsNullOrWhiteSpace(partitionKey), "partitionKey is null.");
-
-            var query = new TableQuery<TEntity>().Where(TableQuery.GenerateFilterCondition("partitionKey", QueryComparisons.Equal, partitionKey));
-
-            return Query(query, continuationToken);
         }
 
         /// <summary>
@@ -153,24 +167,26 @@ namespace Amido.Azure.Storage.TableStorage
         /// If a continuationToken is passed, it will return the next page of results.
         /// </summary>
         /// <param name="partitionKey">The partition key.</param>
-        /// <param name="resultsPerPage">The results per page.</param>
         /// <param name="continuationToken">The continuation token.</param>
+        /// <param name="resultsPerPage">The results per page.</param>
         /// <returns>PagedResults{TEntity}.</returns>
         /// <exception cref="PreconditionException">If partitionKey is null or empty or resultsPerPage is less than one.</exception>
-        public PagedResults<TEntity> ListByPartitionKey(string partitionKey, int resultsPerPage, string continuationToken = null)
+        public PagedResults<TEntity> ListByPartitionKey(string partitionKey, string continuationToken = null, int resultsPerPage = 1000)
         {
             Contract.Requires(!string.IsNullOrWhiteSpace(partitionKey), "partitionKey is null.");
 
-            var query = new TableQuery<TEntity>().Where(TableQuery.GenerateFilterCondition("partitionKey", QueryComparisons.Equal, partitionKey)).Take(resultsPerPage);
+            var query = new TableQuery<TEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey)).Take(resultsPerPage);
 
-            return Query(query, continuationToken);
+            return Query(query, resultsPerPage, continuationToken);
         }
 
         /// <summary>
-        /// Returns a paged list of results. If a continuationToken is passed, it will return the next page of results.
+        /// Returns a paged list of results. The number of results returned can be constrained by passing a value for resultsPerPage.
+        /// If a continuationToken is passed, it will return the next page of results.
         /// </summary>
         /// <param name="continuationToken">The continuation token.</param>
         /// <returns>PagedResults{TEntity}.</returns>
+        /// <exception cref="PreconditionException">If resultsPerPage is less than one.</exception>
         public PagedResults<TEntity> ListAll(string continuationToken = null)
         {
             return Query(new TableQuery<TEntity>(), continuationToken);
@@ -180,11 +196,11 @@ namespace Amido.Azure.Storage.TableStorage
         /// Returns a paged list of results. The number of results returned can be constrained by passing a value for resultsPerPage.
         /// If a continuationToken is passed, it will return the next page of results.
         /// </summary>
-        /// <param name="resultsPerPage">The result per page.</param>
         /// <param name="continuationToken">The continuation token.</param>
+        /// <param name="resultsPerPage">The result per page.</param>
         /// <returns>PagedResults{TEntity}.</returns>
         /// <exception cref="PreconditionException">If resultsPerPage is less than one.</exception>
-        public PagedResults<TEntity> ListAll(int resultsPerPage, string continuationToken = null)
+        public PagedResults<TEntity> ListAll(int resultsPerPage, string continuationToken = null) 
         {
             return Query(new TableQuery<TEntity>(), resultsPerPage, continuationToken);
         }
@@ -198,52 +214,32 @@ namespace Amido.Azure.Storage.TableStorage
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
         {
             Contract.Requires(expression!=null, "expression is null.");
-            var table = cloudTableClient.GetTableReference(tableName);
-
             var query = new TableQuery<TEntity>();
-
-            return table.ExecuteQuery(query).Where(expression.Compile()).AsQueryable();
+            return Table.ExecuteQuery(query).Where(expression.Compile()).AsQueryable();
         }
 
         /// <summary>
-        /// Finds results based upon a given <see cref="Query{TEntity}"/> instance.
+        /// Finds results based upon a given <see cref="TableQuery{TEntity}"/> instance. Results can be limited by specifying the resultsPerPage to return.
         /// </summary>
         /// <param name="query">The query.</param>
-        /// <returns>IQueryable{TEntity}.</returns>
-        /// <exception cref="PreconditionException">If query is null.</exception>
-        public IQueryable<TEntity> Find(TableQuery<TEntity> query)
-        {
-            Contract.Requires(query != null, "query is null.");
-            var table = cloudTableClient.GetTableReference(tableName);
-            return table.ExecuteQuery(query).AsQueryable();
-        }
-
-        /// <summary>
-        /// Finds results based upon a given <see cref="Query{TEntity}"/> instance. Results can be limited by specifying the resultsPerPage to return.
-        /// </summary>
-        /// <param name="query">The query.</param>
-        /// <param name="resultsPerPage">The results per page.</param>
         /// <returns>IQueryable{TEntity}.</returns>
         /// <exception cref="PreconditionException">If query is null or resultsPerPage is less than one.</exception>
-        public IQueryable<TEntity> Find(TableQuery<TEntity> query, int resultsPerPage) 
+        public IQueryable<TEntity> Find(TableQuery<TEntity> query) 
         {
             Contract.Requires(query != null, "query is null.");
-            Contract.Requires(resultsPerPage > 0, "resultsPerPage is zero or less.");
-
-            var table = cloudTableClient.GetTableReference(tableName);
-            return table.ExecuteQuery(query.Take(resultsPerPage)).AsQueryable();
+            return Table.ExecuteQuery(query).AsQueryable();
         }
 
         /// <summary>
-        /// Adds the specified entity.
+        /// Adds the specified entity into table.
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <exception cref="PreconditionException">If entity is null.</exception>
         public virtual void Add(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
-            var tableServiceContext = cloudTableClient.GetTableServiceContext();
-            tableServiceContext.AddObject(tableName, entity);
+            var operation = TableOperation.Insert(entity);
+            Table.Execute(operation, GetTableRequestOptions());
         }
 
         /// <summary>
@@ -251,75 +247,78 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <exception cref="PreconditionException">If entity is null.</exception>
-        public virtual void Update(TEntity entity)
+        public virtual void Update(TEntity entity) 
         {
             Contract.Requires(entity != null, "entity is null");
-            var tableServiceContext = cloudTableClient.GetTableServiceContext();
-            tableServiceContext.UpdateObject(entity);
+            var operation = TableOperation.Replace(entity);
+            Table.Execute(operation, GetTableRequestOptions());
         }
 
         /// <summary>
-        /// Attaches the entity.
+        /// Inserts the given entity into a table if the entity does not exist.
+        /// If the entity does exist then its contents are replaced with the provided entity
         /// </summary>
         /// <param name="entity">The entity.</param>
-        public virtual void AttachEntity(TEntity entity)
+        /// <exception cref="PreconditionException">If entity is null.</exception>
+        public virtual void InsertOrReplace(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
-            var tableServiceContext = cloudTableClient.GetTableServiceContext();
-            tableServiceContext.AttachTo(tableName, entity);
+            var operation = TableOperation.InsertOrReplace(entity);
+            Table.Execute(operation, GetTableRequestOptions());
         }
 
         /// <summary>
-        /// Attaches the entity for upsert.
+        /// Inserts the given entity into a table if the entity does not exist. 
+        /// If the entity does exist then its contents are merged with the provided entity.
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        public virtual void AttachEntityForUpsert(TEntity entity)
+        /// <param name="entity"></param>
+        /// <exception cref="PreconditionException">If entity is null.</exception>
+        public virtual void InsertOrMerge(TEntity entity) 
         {
             Contract.Requires(entity != null, "entity is null");
-            var tableServiceContext = cloudTableClient.GetTableServiceContext();
-            tableServiceContext.AttachTo(tableName, entity);
+            var operation = TableOperation.InsertOrMerge(entity);
+            Table.Execute(operation, GetTableRequestOptions());
         }
 
-        /// <summary>
-        /// Detaches the entity.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        public virtual void DetachEntity(TEntity entity)
-        {
-            Contract.Requires(entity != null, "entity is null");
-            var tableServiceContext = cloudTableClient.GetTableServiceContext();
-            tableServiceContext.Detach(entity);
-        }
+        ///// <summary>
+        ///// Attaches the entity.
+        ///// </summary>
+        ///// <param name="entity">The entity.</param>
+        //public virtual void AttachEntity(TEntity entity)
+        //{
+        //    Contract.Requires(entity != null, "entity is null");
+        //    tableServiceContext.Value.AttachTo(tableName, entity);
+        //}
+
+        ///// <summary>
+        ///// Attaches the entity for upsert.
+        ///// </summary>
+        ///// <param name="entity">The entity.</param>
+        //public virtual void AttachEntityForUpsert(TEntity entity)
+        //{
+        //    Contract.Requires(entity != null, "entity is null");
+        //    tableServiceContext.Value.AttachTo(tableName, entity);
+        //}
+
+        ///// <summary>
+        ///// Detaches the entity.
+        ///// </summary>
+        ///// <param name="entity">The entity.</param>
+        //public virtual void DetachEntity(TEntity entity)
+        //{
+        //    Contract.Requires(entity != null, "entity is null");
+        //    tableServiceContext.Value.Detach(entity);
+        //}
 
         /// <summary>
-        /// Deletes the specified entity from the table.
+        /// Deletes the specified entity from the table. 
         /// </summary>
         /// <param name="entity">The entity.</param>
         public virtual void Delete(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
-            var tableServiceContext = cloudTableClient.GetTableServiceContext();
-            tableServiceContext.DeleteObject(entity);
-        }
-
-        /// <summary>
-        /// Saves any changes made to the table in question.
-        /// </summary>
-        public void SaveBatch()
-        {
-            //SaveChangesWithRetries(SaveChangesOptions.Batch);
-        }
-
-        /// <summary>
-        /// Saves the and replace on update.
-        /// </summary>
-        public void SaveAndReplaceOnUpdate()
-        {
-            //var table = cloudTableClient.GetTableReference(tableName);
-            //TableServiceContext ctx = cloudTableClient.GetTableServiceContext();
-            
-            //ctx.SaveChanges()
-            //SaveChangesWithRetries(SaveChangesOptions.ReplaceOnUpdate);
+            var operation = TableOperation.Delete(entity);
+            Table.Execute(operation, GetTableRequestOptions());
         }
 
         /// <summary>
@@ -327,8 +326,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         public void CreateTableIfNotExists()
         {
-            var table = cloudTableClient.GetTableReference(tableName);
-            table.CreateIfNotExists();
+            Table.CreateIfNotExists();
         }
 
         /// <summary>
@@ -336,8 +334,19 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         public void DeleteTable()
         {
-            var table = cloudTableClient.GetTableReference(tableName);
-            table.DeleteIfExists();
+            Table.DeleteIfExists();
+        }
+
+        /// <summary>
+        /// Returns a <see cref="TableRequestOptions"/> class to allow for setting the Retry policy for table operations.
+        /// </summary>
+        /// <returns></returns>
+        protected static TableRequestOptions GetTableRequestOptions() 
+        {
+            return new TableRequestOptions
+            {
+                RetryPolicy = new ExponentialRetry(TimeSpan.FromMilliseconds(2), 100)
+            };
         }
 
         private PagedResults<TEntity> CreatePagedResults(TableQuerySegment<TEntity> querySegment, ContinuationTokenSerializer serializer) 
@@ -369,19 +378,44 @@ namespace Amido.Azure.Storage.TableStorage
             }
         }
 
-        ///// <summary>
-        ///// Gets the cloud storage account by configuration setting.
-        ///// </summary>
-        ///// <param name="configurationSetting">The configuration setting.</param>
-        ///// <returns>CloudStorageAccount.</returns>
-        ///// <exception cref="System.InvalidOperationException">Unable to find cloud storage account</exception>
-        //protected static CloudStorageAccount GetCloudStorageAccountByConfigurationSetting(string configurationSetting) {
-        //    try {
-        //        return CloudStorageAccount.FromConfigurationSetting(configurationSetting);
-        //    }
-        //    catch(Exception error) {
-        //        throw new InvalidOperationException("Unable to find cloud storage account", error);
-        //    }
-        //}
+        /// <summary>
+        /// Gets the cloud storage account by configuration setting.
+        /// </summary>
+        /// <param name="configurationSetting">The configuration setting.</param>
+        /// <returns>CloudStorageAccount.</returns>
+        /// <exception cref="System.InvalidOperationException">Unable to find cloud storage account</exception>
+        protected static CloudStorageAccount GetCloudStorageAccountByConfigurationSetting(string configurationSetting) 
+        {
+            try 
+            {
+                return CloudStorageAccount.Parse(
+                        CloudConfigurationManager.GetSetting(configurationSetting));
+            }
+            catch(Exception error) 
+            {
+                throw new InvalidOperationException("Unable to find cloud storage account", error);
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if(disposed) 
+            {
+                return;
+            }
+            
+            if (disposing)
+            {
+                
+            }
+
+            disposed = true;
+
+        }
     }
 }
