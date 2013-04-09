@@ -25,7 +25,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public void Should_Return_First_Row()
         {
             // Arrange
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 10; i++)
             {
                 Repository.Add(new TestEntity("PartitionKey1", "RowKey" + i));
             }
@@ -35,14 +35,14 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("PartitionKey1", result.PartitionKey);
+            Assert.AreEqual("RowKey0", result.RowKey);
         }
 
         [TestMethod]
         public void Should_Return_First_Row_Of_Paged_Results()
         {
             // Arrange
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 10; i++)
             {
                 Repository.Add(new TestEntity("PartitionKey1", "RowKey" + i));
             }

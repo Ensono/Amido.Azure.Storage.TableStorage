@@ -18,7 +18,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public void Should_Return_First_Five_Rows()
         {
             // Arrange
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 10; i++)
             {
                 Repository.Add(new TestEntity("PartitionKey1", "RowKey" + i));
             }
@@ -35,7 +35,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public void Should_Return_First_Five_Rows_Across_Partition_Keys()
         {
             // Arrange
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 10; i++)
             {
                 Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + i));
             }
@@ -52,9 +52,9 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public void Should_Return_Continuation_Token_When_More_Rows_Exist()
         {
             // Arrange
-            for (var i = 0; i < 100; i++)
+            for (var i = 0; i < 10; i++)
             {
-                for (var j = 0; j < 20; j++)
+                for (var j = 0; j < 2; j++)
                 {
                     Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
                 }
@@ -79,9 +79,9 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public void Should_Return_Next_Rows_Using_Valid_Continuation()
         {
             // Arrange
-            for (var i = 0; i < 100; i++)
+            for (var i = 0; i < 10; i++)
             {
-                for (var j = 0; j < 20; j++)
+                for (var j = 0; j < 2; j++)
                 {
                     Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
                 }

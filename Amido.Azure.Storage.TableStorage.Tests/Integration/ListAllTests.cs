@@ -28,7 +28,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public void Should_Return_All_Rows_In_Partition()
         {
             // Arrange
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 10; i++)
             {
                 Repository.Add(new TestEntity("PartitionKey1", "RowKey" + i));
             }
@@ -38,14 +38,14 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
 
             // Assert
             Assert.IsNotNull(results);
-            Assert.AreEqual(50, results.Results.Count);
+            Assert.AreEqual(10, results.Results.Count);
         }
 
         [TestMethod]
         public void Should_Return_All_Rows_Across_Partition_Keys()
         {
             // Arrange
-            const int resultCount = 50;
+            const int resultCount = 10;
             for (var i = 0; i < resultCount; i++)
             {
                 Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + i));
@@ -67,7 +67,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
             // Arrange
             for (var i = 0; i < 100; i++)
             {
-                for (var j = 0; j < 20; j++)
+                for (var j = 0; j < 11; j++)
                 {
                     Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
                 }
@@ -91,12 +91,12 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public void Should_Return_Continuation_Token_PagedResults()
         {
             // Arrange
-            const int resultPerPage = 20;
+            const int resultPerPage = 2;
 
             // Arrange
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 4; i++)
             {
-                for (var j = 0; j < 10; j++)
+                for (var j = 0; j < 4; j++)
                 {
                     Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
                 }
@@ -122,13 +122,12 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         public void Should_Not_Return_Continuation_Token_PagedResults_SecondCall()
         {
             // Arrange
-            const int resultPerPage = 20;
+            const int resultPerPage = 4;
 
             // Arrange
-            // Add thirty items to table
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 2; i++)
             {
-                for (var j = 0; j < 10; j++)
+                for (var j = 0; j < 3; j++)
                 {
                     Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
                 }
