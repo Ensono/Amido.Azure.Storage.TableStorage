@@ -8,4 +8,5 @@ TestResults
 *.dat
 *.suo
 *.user
+*.ncrunchsolution
 _ReSharper.Amido.Azure.Storage.TableStorage
