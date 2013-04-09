@@ -7,7 +7,8 @@ namespace Amido.Azure.Storage.TableStorage.Serialization
 {
     public class ContinuationTokenSerializer : IContinuationTokenSerializer
     {
-        public TableContinuationToken DeserializeToken(string token) {
+        public TableContinuationToken DeserializeToken(string token) 
+        {
             TableContinuationToken continuationToken;
             
             var doc = XDocument.Parse(token,LoadOptions.None);
@@ -31,7 +32,8 @@ namespace Amido.Azure.Storage.TableStorage.Serialization
             continuationToken.WriteXml(writer);
         }
 
-        public string SerializeToken(TableContinuationToken continuationToken) {
+        public string SerializeToken(TableContinuationToken continuationToken) 
+        {
 
             using (var stringWriter = new StringWriter())
             {

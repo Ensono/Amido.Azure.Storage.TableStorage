@@ -3,7 +3,8 @@ using System.Diagnostics;
 
 namespace Amido.Azure.Storage.TableStorage.Dbc
 {
-    internal static class Contract {
+    internal static class Contract 
+    {
         #region Requires
 
         public static void Requires(bool condition) 

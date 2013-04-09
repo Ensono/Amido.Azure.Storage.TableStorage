@@ -33,49 +33,37 @@ namespace Amido.Azure.Storage.TableStorage
 
         public void Insert(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>
-                (entity,
-                    TableOperation.Insert(entity));
+            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.Insert(entity));
             operations.Enqueue(e);
         }
 
         public void Delete(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>
-                (entity,
-                    TableOperation.Delete(entity));
+            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.Delete(entity));
             operations.Enqueue(e);
         }
 
         public void InsertOrMerge(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>
-                (entity,
-                    TableOperation.InsertOrMerge(entity));
+            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.InsertOrMerge(entity));
             operations.Enqueue(e);
         }
 
         public void InsertOrReplace(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>
-                (entity,
-                    TableOperation.InsertOrReplace(entity));
+            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.InsertOrReplace(entity));
             operations.Enqueue(e);
         }
 
         public void Merge(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>
-                (entity,
-                    TableOperation.Merge(entity));
+            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.Merge(entity));
             operations.Enqueue(e);
         }
 
         public void Replace(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>
-                (entity,
-                    TableOperation.Replace(entity));
+            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.Replace(entity));
             operations.Enqueue(e);
         }
 
@@ -145,6 +133,5 @@ namespace Amido.Azure.Storage.TableStorage
                 .Take(BatchSize)
                 .ToList();
         }
-
     }
 }
