@@ -12,23 +12,14 @@ namespace Amido.Azure.Storage.TableStorage
     {
         private const int BatchSize = 100;
         private readonly ConcurrentQueue<Tuple<ITableEntity, TableOperation>> operations;
-        private readonly CloudStorageAccount cloudStorageAccount;
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
 
-
         internal BatchWriter(CloudStorageAccount cloudStorageAccount, string tableName)
         {
-            this.cloudStorageAccount = cloudStorageAccount;
             this.tableName = tableName;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
-        }
-
-        internal BatchWriter(CloudStorageAccount cloudStorageAccount, string tableName, CloudTableClient cloudTableClient) 
-        {
-            this.cloudStorageAccount = cloudStorageAccount;
-            this.tableName = tableName;
-            this.cloudTableClient = cloudTableClient;
+            operations = new ConcurrentQueue<Tuple<ITableEntity, TableOperation>>();
         }
 
         public void Insert(TEntity entity)
