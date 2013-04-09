@@ -3,18 +3,16 @@ using Amido.Azure.Storage.TableStorage.Dbc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace Amido.Azure.Storage.TableStorage.Tests.Integration {
+namespace Amido.Azure.Storage.TableStorage.Tests.Integration 
+{
     [TestClass]
     public class FindTests : TestBase 
     {
         [TestMethod]
         [ExpectedException(typeof(PreconditionException))]
-        public void Should_Throw_PreconditionException_If_Query_Null() {
-            // Act
-            var results = new List<TestEntity>(Repository.Find((TableQuery<TestEntity>)null));
-
-            // Assert
-            Assert.IsNull(results);
+        public void Should_Throw_PreconditionException_If_Query_Null() 
+        {
+            new List<TestEntity>(Repository.Find((TableQuery<TestEntity>)null));
         }
 
         //[TestMethod]

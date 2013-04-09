@@ -27,22 +27,21 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [ClassCleanup]
-        public static void ClassCleanup() {
+        public static void ClassCleanup() 
+        {
             CurrentTable.DeleteIfExists();
         }
         
         [TestMethod]
         [ExpectedException(typeof(PreconditionException))]
-        public void Should_Throw_PreconditionException() {
-            // Act
+        public void Should_Throw_PreconditionException() 
+        {
             var results = Repository.Query(null);
-
-            // Assert
-            Assert.IsNull(results);
         }
 
         [TestMethod]
-        public void Should_Return_First_Five_Rows() {
+        public void Should_Return_First_Five_Rows() 
+        {
             
             // Act
             var results = Repository.Query(new TableQuery<TestEntity>(), 5);
@@ -54,7 +53,8 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [TestMethod]
-        public void Should_Return_First_Ten_Rows_ForPartionKey() {
+        public void Should_Return_First_Ten_Rows_ForPartionKey() 
+        {
             //Arrange
             var query = new TableQuery<TestEntity>();
             var condtion = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "PartitionKey3");
@@ -85,7 +85,8 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [TestMethod]
-        public void Should_Return_First_Ten_Rows_ForStringIntValue() {
+        public void Should_Return_First_Ten_Rows_ForStringIntValue() 
+        {
             //Arrange
             var query = new TableQuery<TestEntity>();
             var condtion = TableQuery.GenerateFilterConditionForInt("TestInt32Value", QueryComparisons.Equal, 7);
@@ -100,7 +101,8 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [TestMethod]
-        public void Should_Return_Continuation_Token_When_More_Rows_Exist() {
+        public void Should_Return_Continuation_Token_When_More_Rows_Exist() 
+        {
             // Arrange
             var query = new TableQuery<TestEntity>();
 
@@ -119,7 +121,8 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [TestMethod]
-        public void Should_Return_Next_Rows_Using_Valid_Continuation() {
+        public void Should_Return_Next_Rows_Using_Valid_Continuation() 
+        {
             // Arrange
             var query = new TableQuery<TestEntity>();
 
@@ -143,7 +146,8 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [TestMethod]
-        public void Should_Not_Return_ContinuationToken_On_Final_Call() {
+        public void Should_Not_Return_ContinuationToken_On_Final_Call() 
+        {
             // Arrange
             var query = new TableQuery<TestEntity>();
 

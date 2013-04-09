@@ -1,0 +1,152 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Amido.Azure.Storage.TableStorage.Tests.Integration
+{
+    [TestClass]
+    public class FindTests2 : TableStorageRepositoryTestBase
+    {
+        //    [TestMethod]
+        //    [ExpectedException(typeof(PreconditionException))]
+        //    public void Should_Throw_PreconditionException_If_Query_Null() 
+        //    {
+        //        // Act
+        //        var results = new List<TestEntity>(Repository.Find((TableQuery<TestEntity>)null));
+
+        //        // Assert
+        //        Assert.IsNull(results);
+        //    }
+
+        //    [TestMethod]
+        //    public void Should_Return_Expected_Rows_From_Expression()
+        //    {
+        //        // Arrange
+        //        for (var i = 0; i < 10; i++)
+        //        {
+        //            for (var j = 0; j < 10; j++)
+        //            {
+        //                Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
+        //            }
+        //            Repository.SaveBatch();
+        //        }
+
+        //        // Act
+        //        var results = new List<TestEntity>(Repository.Find(x => x.PartitionKey == "PartitionKey2"));
+
+        //        // Assert
+        //        Assert.IsNotNull(results);
+        //        Assert.AreEqual(10, results.Count);
+        //    }
+
+        //    [TestMethod]
+        //    public void Should_Return_Expected_Rows_From_Query()
+        //    {
+        //        // Arrange
+        //        for (var i = 0; i < 10; i++)
+        //        {
+        //            for (var j = 0; j < 10; j++)
+        //            {
+        //                Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
+        //            }
+        //            Repository.SaveBatch();
+        //        }
+
+        //        // Act
+        //        var results = new List<TestEntity>(Repository.Find(new ListByPartitionKeyQuery<TestEntity>("PartitionKey2")));
+
+        //        // Assert
+        //        Assert.IsNotNull(results);
+        //        Assert.AreEqual(10, results.Count);
+        //    }
+
+        //    [TestMethod]
+        //    public void Should_Not_Return_Rows_From_Query() {
+        //        // Arrange
+        //        for(var i = 0; i < 10; i++) {
+        //            for(var j = 0; j < 10; j++) {
+        //                Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
+        //            }
+        //            Repository.SaveBatch();
+        //        }
+
+        //        // Act
+        //        var results = new List<TestEntity>(Repository.Find(new ListByPartitionKeyQuery<TestEntity>("PartitionKey25")));
+
+        //        // Assert
+        //        Assert.IsNotNull(results);
+        //        Assert.AreEqual(0, results.Count);
+        //    }
+
+        //    [TestMethod]
+        //    public void Should_Return_Expected_Row_From_Query() {
+        //        // Arrange
+        //        for(var i = 0; i < 10; i++) {
+        //            for(var j = 0; j < 10; j++) {
+        //                Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
+        //            }
+        //            Repository.SaveBatch();
+        //        }
+
+        //        // Act
+        //        var results = new List<TestEntity>(Repository.Find(new GetByPartitionKeyAndRowKeyQuery<TestEntity>("PartitionKey2", "RowKey2")));
+
+        //        // Assert
+        //        Assert.IsNotNull(results);
+        //        Assert.AreEqual(1, results.Count);
+        //    }
+
+        //    [TestMethod]
+        //    public void Should_Not_Return_Row_From_Query() {
+        //        // Arrange
+        //        for(var i = 0; i < 10; i++) {
+        //            for(var j = 0; j < 10; j++) {
+        //                Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
+        //            }
+        //            Repository.SaveBatch();
+        //        }
+
+        //        // Act
+        //        var results = new List<TestEntity>(Repository.Find(new GetByPartitionKeyAndRowKeyQuery<TestEntity>("PartitionKey2", "RowKey25")));
+
+        //        // Assert
+        //        Assert.IsNotNull(results);
+        //        Assert.AreEqual(0, results.Count);
+        //    }
+
+        //    [TestMethod]
+        //    [ExpectedException(typeof(PreconditionException))]
+        //    public void Should_Throw_PreconditionException() {
+        //        // Arrange
+        //        for(var i = 0; i < 10; i++) {
+        //            for(var j = 0; j < 10; j++) {
+        //                Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
+        //            }
+        //            Repository.SaveBatch();
+        //        }
+
+        //        // Act
+        //        var results = new List<TestEntity>(Repository.Find(new ListByPartitionKeyQuery<TestEntity>("PartitionKey2"), 0));
+
+        //        // Assert
+        //        Assert.IsNotNull(results);
+        //        Assert.AreEqual(5, results.Count);
+        //    }
+
+        //    [TestMethod]
+        //    public void Should_Return_Expected_Number_Of_Rows_From_Query() {
+        //        // Arrange
+        //        for(var i = 0; i < 10; i++) {
+        //            for(var j = 0; j < 10; j++) {
+        //                Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
+        //            }
+        //            Repository.SaveBatch();
+        //        }
+
+        //        // Act
+        //        var results = new List<TestEntity>(Repository.Find(new ListByPartitionKeyQuery<TestEntity>("PartitionKey2"), 5));
+
+        //        // Assert
+        //        Assert.IsNotNull(results);
+        //        Assert.AreEqual(5, results.Count);
+        //    }
+    }
+}

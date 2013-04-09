@@ -18,7 +18,8 @@ namespace Amido.Azure.Storage.TableStorage.Tests
         protected static CloudTable CurrentTable = null;
         protected ITableStorageRepository<TestEntity> Repository;
         
-        static TestBase() {
+        static TestBase() 
+        {
             var element = XElement.Load(TestConfigurations.DefaultTestConfigFilePath);
             TestConfigurations = TestConfigurations.ReadFromXml(element);
 
@@ -49,12 +50,14 @@ namespace Amido.Azure.Storage.TableStorage.Tests
         }
 
         [TestInitialize]
-        public void TestInitialize() {
+        public void TestInitialize() 
+        {
             CC();
         }
 
         [TestCleanup]
-        public void TestCleanup() {
+        public void TestCleanup() 
+        {
             DD();
         }
 
@@ -88,17 +91,20 @@ namespace Amido.Azure.Storage.TableStorage.Tests
             return retString.ToString();
         }
         
-        public static TestConfigurations TestConfigurations {
+        public static TestConfigurations TestConfigurations 
+        {
             get;
             private set;
         }
 
-        public static TenantConfiguration TargetTenantConfig {
+        public static TenantConfiguration TargetTenantConfig 
+        {
             get;
             private set;
         }
 
-        public static TenantType CurrentTenantType {
+        public static TenantType CurrentTenantType 
+        {
             get;
             private set;
         }
@@ -106,7 +112,8 @@ namespace Amido.Azure.Storage.TableStorage.Tests
         /// <summary>
         /// The StorageCredentials created from account settings in the target tenant config.
         /// </summary>
-        public static StorageCredentials StorageCredentials {
+        public static StorageCredentials StorageCredentials 
+        {
             get;
             private set;
         }

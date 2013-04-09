@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace Amido.Azure.Storage.TableStorage.Tests.Integration
+namespace Amido.Azure.Storage.TableStorage.Tests
 {
     public class TestEntity : TableEntity
     {
