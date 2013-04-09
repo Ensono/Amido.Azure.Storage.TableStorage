@@ -1,6 +1,7 @@
 ﻿namespace Amido.Azure.Storage.TableStorage.Tests.TestConfigProcess
 {
-    public class TenantConfiguration {
+    public class TenantConfiguration 
+    {
         public string TenantName { get; internal set; }
         public string AccountName { get; internal set; }
         public string AccountKey { get; internal set; }

@@ -5,17 +5,20 @@ using System.Xml.Linq;
 
 namespace Amido.Azure.Storage.TableStorage.Tests.TestConfigProcess
 {
-    public class TestConfigurations {
+    public class TestConfigurations 
+    {
         public static readonly string DefaultTestConfigFilePath = @"TestConfigurations.xml";
         public string TargetTenantName { get; internal set; }
         public List<TenantConfiguration> TenantConfigurations { get; internal set; }
 
-        public static TestConfigurations ReadFromXml(XDocument testConfigurationsDoc) {
+        public static TestConfigurations ReadFromXml(XDocument testConfigurationsDoc) 
+        {
             var testConfigurationsElement = testConfigurationsDoc.Element("TestConfigurations");
             return ReadFromXml(testConfigurationsElement);
         }
 
-        public static TestConfigurations ReadFromXml(XElement testConfigurationsElement) {
+        public static TestConfigurations ReadFromXml(XElement testConfigurationsElement) 
+        {
             var result = new TestConfigurations
                 {
                     TargetTenantName = (string) testConfigurationsElement.Element("TargetTestTenant"),

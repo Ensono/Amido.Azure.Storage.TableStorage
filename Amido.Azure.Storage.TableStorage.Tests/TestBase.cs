@@ -37,17 +37,17 @@ namespace Amido.Azure.Storage.TableStorage.Tests
 
         public TestContext TestContext { get; set; }
 
-        [AssemblyInitialize]
-        public static void AssemblyInitialize(TestContext testContext) 
-        {
-            var process = Process.Start(@"C:\Program Files\Microsoft SDKs\Windows Azure\Emulator\csrun", "/devstore");
-            if(process != null) {
-                process.WaitForExit();
-            }
-            else {
-                throw new ApplicationException("Unable to start storage emulator.");
-            }
-        }
+        //[AssemblyInitialize]
+        //public static void AssemblyInitialize(TestContext testContext) 
+        //{
+        //    var process = Process.Start(@"C:\Program Files\Microsoft SDKs\Windows Azure\Emulator\csrun", "/devstore");
+        //    if(process != null) {
+        //        process.WaitForExit();
+        //    }
+        //    else {
+        //        throw new ApplicationException("Unable to start storage emulator.");
+        //    }
+        //}
 
         [TestInitialize]
         public void TestInitialize() 

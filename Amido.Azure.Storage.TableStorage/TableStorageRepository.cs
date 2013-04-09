@@ -388,8 +388,7 @@ namespace Amido.Azure.Storage.TableStorage
         {
             try 
             {
-                return CloudStorageAccount.Parse(
-                        CloudConfigurationManager.GetSetting(configurationSetting));
+                return CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting(configurationSetting));
             }
             catch(Exception error) 
             {

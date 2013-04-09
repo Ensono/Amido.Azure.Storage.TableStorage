@@ -80,6 +80,7 @@
     <Compile Include="Integration\ListByPartitionKeyTests.cs" />
     <Compile Include="Integration\QueryTest2.cs" />
     <Compile Include="Integration\QueryTests.cs" />
+    <Compile Include="Integration\TableStorageRepositoryTests.cs" />
     <Compile Include="TableStorageRepositoryTestBase.cs" />
     <Compile Include="TestEntity.cs" />
     <Compile Include="Integration\AccountConnectionTests.cs" />
@@ -106,6 +107,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
