@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Amido.Azure.Storage.TableStorage.Account;
-using Amido.Azure.Storage.TableStorage.Tests.Integration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Amido.Azure.Storage.TableStorage.Tests
@@ -38,6 +37,15 @@ namespace Amido.Azure.Storage.TableStorage.Tests
             else
             {
                 throw new ApplicationException("Unable to start storage emulator.");
+            }
+        }
+
+        [AssemblyCleanup]
+        public static void AssemblyCleanup()
+        {
+            foreach (var proc in Process.GetProcessesByName("csmonitor"))
+            {
+                proc.Kill();
             }
         }
     }

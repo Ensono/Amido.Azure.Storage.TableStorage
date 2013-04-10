@@ -80,7 +80,8 @@ namespace Amido.Azure.Storage.TableStorage
                    var batch = 0;
                    var operationBatch = GetOperations(opreations, batch);
 
-                   while(operationBatch.Any()) {
+                   while(operationBatch.Any()) 
+                   {
                        var tableBatchOperation = MakeBatchOperation(operationBatch);
 
                        ExecuteBatchWithRetries(tableBatchOperation);
