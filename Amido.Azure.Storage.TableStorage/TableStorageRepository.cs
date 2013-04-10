@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Linq.Expressions;
 using Amido.Azure.Storage.TableStorage.Account;
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Amido.Azure.Storage.TableStorage.Paging;
@@ -9,7 +8,6 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Microsoft.WindowsAzure.Storage.Table;
-using Microsoft.WindowsAzure.Storage.Table.DataServices;
 
 namespace Amido.Azure.Storage.TableStorage
 {
@@ -47,7 +45,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="cloudStorageAccount">The cloud storage account.</param>
         /// <param name="tableName">Name of the table.</param>
-        protected TableStorageRepository(CloudStorageAccount cloudStorageAccount, string tableName)
+        private TableStorageRepository(CloudStorageAccount cloudStorageAccount, string tableName)
         {
             this.tableName = tableName;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
@@ -206,31 +204,6 @@ namespace Amido.Azure.Storage.TableStorage
         }
 
         /// <summary>
-        /// Finds results based upon a given expression.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns>IQueryable{TEntity}.</returns>
-        /// <exception cref="PreconditionException">If expression is null.</exception>
-        public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression)
-        {
-            Contract.Requires(expression!=null, "expression is null.");
-            var query = new TableQuery<TEntity>();
-            return Table.ExecuteQuery(query).Where(expression.Compile()).AsQueryable();
-        }
-
-        /// <summary>
-        /// Finds results based upon a given <see cref="TableQuery{TEntity}"/> instance. Results can be limited by specifying the resultsPerPage to return.
-        /// </summary>
-        /// <param name="query">The query.</param>
-        /// <returns>IQueryable{TEntity}.</returns>
-        /// <exception cref="PreconditionException">If query is null or resultsPerPage is less than one.</exception>
-        public IQueryable<TEntity> Find(TableQuery<TEntity> query) 
-        {
-            Contract.Requires(query != null, "query is null.");
-            return Table.ExecuteQuery(query).AsQueryable();
-        }
-
-        /// <summary>
         /// Adds the specified entity into table.
         /// </summary>
         /// <param name="entity">The entity.</param>
@@ -311,7 +284,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// Returns a <see cref="TableRequestOptions"/> class to allow for setting the Retry policy for table operations.
         /// </summary>
         /// <returns></returns>
-        protected static TableRequestOptions GetTableRequestOptions() 
+        private static TableRequestOptions GetTableRequestOptions() 
         {
             return new TableRequestOptions
             {
@@ -336,7 +309,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// <param name="storageConnectionString">The storage connection string.</param>
         /// <returns>CloudStorageAccount.</returns>
         /// <exception cref="System.InvalidOperationException">Unable to find cloud storage account</exception>
-        protected static CloudStorageAccount GetCloudStorageAccountByConnectionString(string storageConnectionString)
+        private static CloudStorageAccount GetCloudStorageAccountByConnectionString(string storageConnectionString)
         {
             try
             {
@@ -354,7 +327,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// <param name="configurationSetting">The configuration setting.</param>
         /// <returns>CloudStorageAccount.</returns>
         /// <exception cref="System.InvalidOperationException">Unable to find cloud storage account</exception>
-        protected static CloudStorageAccount GetCloudStorageAccountByConfigurationSetting(string configurationSetting) 
+        private static CloudStorageAccount GetCloudStorageAccountByConfigurationSetting(string configurationSetting) 
         {
             try 
             {

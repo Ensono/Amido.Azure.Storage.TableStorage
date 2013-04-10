@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Amido.Azure.Storage.TableStorage.Paging;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -131,19 +129,5 @@ namespace Amido.Azure.Storage.TableStorage
         /// <param name="continuationToken">The continuation token.</param>
         /// <returns>PagedResults{TEntity}.</returns>
         PagedResults<TEntity> ListAll(int resultsPerPage, string continuationToken = null); 
-
-        /// <summary>
-        /// Finds results based upon a given expression.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns>IQueryable{TEntity}.</returns>
-        IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> expression);
-
-        /// <summary>
-        /// Finds results based upon a given <see cref="TableQuery{TEntity}"/> instance. Results can be limited by specifying the resultsPerPage to return.
-        /// </summary>
-        /// <param name="query">The query.</param>
-        /// <returns>IQueryable{TEntity}.</returns>
-        IQueryable<TEntity> Find(TableQuery<TEntity> query);
     }
 }
