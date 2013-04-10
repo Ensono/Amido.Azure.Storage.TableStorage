@@ -20,7 +20,6 @@ namespace Amido.Azure.Storage.TableStorage
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
         private readonly Lazy<BatchWriter<TEntity>> batchWriter;
-        private bool disposed;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableStorageRepository{TEntity}" /> class.
@@ -208,7 +207,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <exception cref="PreconditionException">If entity is null.</exception>
-        public virtual void Add(TEntity entity)
+        public void Add(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
             var operation = TableOperation.Insert(entity);
@@ -220,7 +219,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <exception cref="PreconditionException">If entity is null.</exception>
-        public virtual void Update(TEntity entity) 
+        public void Update(TEntity entity) 
         {
             Contract.Requires(entity != null, "entity is null");
             var operation = TableOperation.Replace(entity);
@@ -233,7 +232,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="entity">The entity.</param>
         /// <exception cref="PreconditionException">If entity is null.</exception>
-        public virtual void InsertOrReplace(TEntity entity)
+        public void InsertOrReplace(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
             var operation = TableOperation.InsertOrReplace(entity);
@@ -246,7 +245,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="entity"></param>
         /// <exception cref="PreconditionException">If entity is null.</exception>
-        public virtual void InsertOrMerge(TEntity entity) 
+        public void InsertOrMerge(TEntity entity) 
         {
             Contract.Requires(entity != null, "entity is null");
             var operation = TableOperation.InsertOrMerge(entity);
@@ -257,7 +256,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// Deletes the specified entity from the table. 
         /// </summary>
         /// <param name="entity">The entity.</param>
-        public virtual void Delete(TEntity entity)
+        public void Delete(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
             var operation = TableOperation.Delete(entity);

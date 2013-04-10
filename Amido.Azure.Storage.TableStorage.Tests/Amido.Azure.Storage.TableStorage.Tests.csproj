@@ -71,20 +71,20 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Dbc\ContractTests.cs" />
-    <Compile Include="Integration\DeleteTests.cs" />
-    <Compile Include="Integration\FirstOrDefaultTests.cs" />
-    <Compile Include="Integration\FirstTests.cs" />
-    <Compile Include="Integration\GetByPartitionKeyAndRowKeyTests.cs" />
-    <Compile Include="Integration\InsertOrMergeTests.cs" />
-    <Compile Include="Integration\InsertOrReplaceTests.cs" />
-    <Compile Include="Integration\ListAllTests.cs" />
-    <Compile Include="Integration\ListByPartitionKeyTests.cs" />
-    <Compile Include="Integration\QueryTest.cs" />
-    <Compile Include="Integration\TableStorageRepositoryTests.cs" />
+    <Compile Include="TableStorageRepository\DeleteTests.cs" />
+    <Compile Include="TableStorageRepository\FirstOrDefaultTests.cs" />
+    <Compile Include="TableStorageRepository\FirstTests.cs" />
+    <Compile Include="TableStorageRepository\GetByPartitionKeyAndRowKeyTests.cs" />
+    <Compile Include="TableStorageRepository\InsertOrMergeTests.cs" />
+    <Compile Include="TableStorageRepository\InsertOrReplaceTests.cs" />
+    <Compile Include="TableStorageRepository\ListAllTests.cs" />
+    <Compile Include="TableStorageRepository\ListByPartitionKeyTests.cs" />
+    <Compile Include="TableStorageRepository\QueryTest.cs" />
+    <Compile Include="TableStorageRepository\TableStorageRepositoryTests.cs" />
     <Compile Include="TableStorageRepositoryTestBase.cs" />
     <Compile Include="TestEntity.cs" />
-    <Compile Include="Integration\AccountConnectionTests.cs" />
-    <Compile Include="Integration\UpdateTests.cs" />
+    <Compile Include="TableStorageRepository\AccountConnectionTests.cs" />
+    <Compile Include="TableStorageRepository\UpdateTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
