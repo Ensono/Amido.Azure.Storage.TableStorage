@@ -126,7 +126,7 @@ namespace Amido.Azure.Storage.TableStorage
         public TEntity FirstOrDefault(TableQuery<TEntity> query)
         {
             Contract.Requires(query != null, "query is null.");
-            return Table.ExecuteQuery(query).FirstOrDefault();
+            return Table.ExecuteQuery(query.Take(1)).FirstOrDefault();
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Amido.Azure.Storage.TableStorage
         public TEntity First(TableQuery<TEntity> query)
         {
             Contract.Requires(query != null, "query is null.");
-            return Table.ExecuteQuery(query).First();
+            return Table.ExecuteQuery(query.Take(1)).First();
         }
 
         /// <summary>
@@ -278,36 +278,6 @@ namespace Amido.Azure.Storage.TableStorage
             var operation = TableOperation.InsertOrMerge(entity);
             Table.Execute(operation, GetTableRequestOptions());
         }
-
-        ///// <summary>
-        ///// Attaches the entity.
-        ///// </summary>
-        ///// <param name="entity">The entity.</param>
-        //public virtual void AttachEntity(TEntity entity)
-        //{
-        //    Contract.Requires(entity != null, "entity is null");
-        //    tableServiceContext.Value.AttachTo(tableName, entity);
-        //}
-
-        ///// <summary>
-        ///// Attaches the entity for upsert.
-        ///// </summary>
-        ///// <param name="entity">The entity.</param>
-        //public virtual void AttachEntityForUpsert(TEntity entity)
-        //{
-        //    Contract.Requires(entity != null, "entity is null");
-        //    tableServiceContext.Value.AttachTo(tableName, entity);
-        //}
-
-        ///// <summary>
-        ///// Detaches the entity.
-        ///// </summary>
-        ///// <param name="entity">The entity.</param>
-        //public virtual void DetachEntity(TEntity entity)
-        //{
-        //    Contract.Requires(entity != null, "entity is null");
-        //    tableServiceContext.Value.Detach(entity);
-        //}
 
         /// <summary>
         /// Deletes the specified entity from the table. 
