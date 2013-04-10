@@ -78,8 +78,7 @@
     <Compile Include="Integration\GetByPartitionKeyAndRowKeyTests.cs" />
     <Compile Include="Integration\ListAllTests.cs" />
     <Compile Include="Integration\ListByPartitionKeyTests.cs" />
-    <Compile Include="Integration\QueryTest2.cs" />
-    <Compile Include="Integration\QueryTests.cs" />
+    <Compile Include="Integration\QueryTest.cs" />
     <Compile Include="Integration\TableStorageRepositoryTests.cs" />
     <Compile Include="TableStorageRepositoryTestBase.cs" />
     <Compile Include="TestEntity.cs" />

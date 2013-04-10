@@ -5,7 +5,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 namespace Amido.Azure.Storage.TableStorage.Tests.Integration
 {
     [TestClass]
-    public class QueryTest2 : TableStorageRepositoryTestBase
+    public class QueryTest : TableStorageRepositoryTestBase
     {
         [TestMethod]
         [ExpectedException(typeof(PreconditionException))]
@@ -15,7 +15,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [TestMethod]
-        public void Should_Return_First_Five_Rows()
+        public void Should_Return_First_Five_Rows_In_Same_Partition()
         {
             // Arrange
             for (var i = 0; i < 10; i++)
@@ -49,37 +49,10 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [TestMethod]
-        public void Should_Return_Continuation_Token_When_More_Rows_Exist()
+        public void Should_Return_All_Rows_Using_Valid_Continuation_Tokens()
         {
             // Arrange
-            for (var i = 0; i < 10; i++)
-            {
-                for (var j = 0; j < 2; j++)
-                {
-                    Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
-                }
-            }
-
-            // Act
-            var results = Repository.Query(new TableQuery<TestEntity>(), 5);
-
-            // Assert
-            Assert.IsNotNull(results);
-            Assert.AreEqual(5, results.Results.Count);
-            Assert.IsTrue(results.HasMoreResults);
-            Assert.IsNotNull(results.ContinuationToken);
-            //TODO: Some XDoc type validation of the continuationtoken
-            //Assert.IsTrue(result.ContinuationToken.Contains("ResultContinuation"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("Table"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("NextPartitionKey"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("NextRowKey"));
-        }
-
-        [TestMethod]
-        public void Should_Return_Next_Rows_Using_Valid_Continuation()
-        {
-            // Arrange
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 6; i++)
             {
                 for (var j = 0; j < 2; j++)
                 {
@@ -91,6 +64,9 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
 
             // Assert
             Assert.IsNotNull(firstResults);
+            Assert.AreEqual(5, firstResults.Results.Count);
+            Assert.IsTrue(firstResults.HasMoreResults);
+            Assert.IsNotNull(firstResults.ContinuationToken);
 
             // Act
             var secondResults = Repository.Query(new TableQuery<TestEntity>(), 5, firstResults.ContinuationToken);
@@ -98,10 +74,24 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
             // Assert
             Assert.IsNotNull(secondResults);
             Assert.AreEqual(5, secondResults.Results.Count);
-
+            Assert.IsTrue(secondResults.HasMoreResults);
+            Assert.IsNotNull(secondResults.ContinuationToken);
             foreach (var secondResult in secondResults.Results)
             {
-                Assert.IsTrue(!firstResults.Results.Contains(secondResult));
+                Assert.IsFalse(firstResults.Results.Contains(secondResult));
+            }
+
+            // Act
+            var thirdResults = Repository.Query(new TableQuery<TestEntity>(), 5, secondResults.ContinuationToken);
+
+            // Assert
+            Assert.IsNotNull(thirdResults);
+            Assert.AreEqual(2, thirdResults.Results.Count);
+            Assert.IsFalse(thirdResults.HasMoreResults);
+            Assert.IsNull(thirdResults.ContinuationToken);
+            foreach (var thirdResult in thirdResults.Results)
+            {
+                Assert.IsFalse(secondResults.Results.Contains(thirdResult));
             }
         }
     }
