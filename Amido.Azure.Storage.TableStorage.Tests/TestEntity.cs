@@ -1,5 +1,4 @@
-﻿
-using Microsoft.WindowsAzure.Storage.Table;
+﻿using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Amido.Azure.Storage.TableStorage.Tests
 {
@@ -9,11 +8,13 @@ namespace Amido.Azure.Storage.TableStorage.Tests
         {
         }
 
-        public TestEntity(string partitionKey, string rowKey) : base(partitionKey, rowKey)
+        public TestEntity(string partitionKey, string rowKey) 
+            : base(partitionKey, rowKey)
         {
         }
 
-        public string TestStringValue { get; set; }
+        public string TestStringValue1 { get; set; }
+        public string TestStringValue2 { get; set; }
         public int TestInt32Value { get; set; }
     }
 }

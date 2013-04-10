@@ -76,6 +76,8 @@
     <Compile Include="Integration\FirstOrDefaultTests.cs" />
     <Compile Include="Integration\FirstTests.cs" />
     <Compile Include="Integration\GetByPartitionKeyAndRowKeyTests.cs" />
+    <Compile Include="Integration\InsertOrMergeTests.cs" />
+    <Compile Include="Integration\InsertOrReplaceTests.cs" />
     <Compile Include="Integration\ListAllTests.cs" />
     <Compile Include="Integration\ListByPartitionKeyTests.cs" />
     <Compile Include="Integration\QueryTest.cs" />

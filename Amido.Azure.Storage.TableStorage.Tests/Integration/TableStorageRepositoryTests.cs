@@ -1,4 +1,5 @@
-﻿using Amido.Azure.Storage.TableStorage.Account;
+﻿using System;
+using Amido.Azure.Storage.TableStorage.Account;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Amido.Azure.Storage.TableStorage.Tests.Integration
@@ -14,6 +15,15 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
             var repository = new TableStorageRepository<TestEntity>(accountConnection);
 
             Assert.IsNotNull(repository);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Should_Throw_On_Invalid_Connection_String()
+        {
+            var accountConnection = new AccountConnection<TestEntity>("Invalid");
+
+            new TableStorageRepository<TestEntity>(accountConnection);
         }
     }
 }

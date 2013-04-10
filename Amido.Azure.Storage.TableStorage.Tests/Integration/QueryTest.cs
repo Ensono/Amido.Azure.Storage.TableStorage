@@ -49,12 +49,12 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Integration
         }
 
         [TestMethod]
-        public void Should_Return_All_Rows_Using_Valid_Continuation_Tokens()
+        public void Should_Return_All_Rows_Using_Valid_Continuation_Tokens_Partition_Keys()
         {
             // Arrange
-            for (var i = 0; i < 6; i++)
+            for (var i = 0; i < 2; i++)
             {
-                for (var j = 0; j < 2; j++)
+                for (var j = 0; j < 6; j++)
                 {
                     Repository.Add(new TestEntity("PartitionKey" + i, "RowKey" + j));
                 }

@@ -13,7 +13,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests
         [TestInitialize]
         public void Initialize()
         {
-            var accountConnection = new AccountConnection<TestEntity>(Properties.Resources.AccountConnectionString);
+            var accountConnection = new AccountConnection<TestEntity>(Properties.Resources.AccountConnectionString, "TestEntity");
 
             Repository = new TableStorageRepository<TestEntity>(accountConnection);
             ((ITableStorageAdminRepository)Repository).DeleteTable();
