@@ -16,7 +16,7 @@ namespace Amido.Azure.Storage.TableStorage
     /// Class TableStorageRepository
     /// </summary>
     /// <typeparam name="TEntity">The type of the T entity.</typeparam>
-    public class TableStorageRepository<TEntity> : ITableStorageRepository<TEntity>, ITableStorageAdminRepository, IDisposable where TEntity : class, ITableEntity, new()
+    public class TableStorageRepository<TEntity> : ITableStorageRepository<TEntity>, ITableStorageAdminRepository where TEntity : class, ITableEntity, new()
     {
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
@@ -393,27 +393,6 @@ namespace Amido.Azure.Storage.TableStorage
             {
                 throw new InvalidOperationException("Unable to find cloud storage account", error);
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected void Dispose(bool disposing)
-        {
-            if(disposed) 
-            {
-                return;
-            }
-            
-            if (disposing)
-            {
-                
-            }
-
-            disposed = true;
-
         }
     }
 }
