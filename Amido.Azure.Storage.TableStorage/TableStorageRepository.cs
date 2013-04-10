@@ -9,6 +9,7 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.WindowsAzure.Storage.Table.DataServices;
 
 namespace Amido.Azure.Storage.TableStorage
 {
@@ -74,7 +75,7 @@ namespace Amido.Azure.Storage.TableStorage
         }
 
         /// <summary>
-        /// 
+        /// Executes the table query (with optional continuation token) and returns a maximum of 1000 entities in a paged results.
         /// </summary>
         /// <param name="query"></param>
         /// <param name="continuationToken"></param>
@@ -95,7 +96,7 @@ namespace Amido.Azure.Storage.TableStorage
         }
 
         /// <summary>
-        /// 
+        /// Executes the table query (with optional continuation token) and returns the supplied number of entities in a paged results.
         /// </summary>
         /// <param name="query"></param>
         /// <param name="resultsPerPage"></param>
