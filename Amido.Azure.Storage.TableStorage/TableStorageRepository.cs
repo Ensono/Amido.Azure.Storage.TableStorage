@@ -16,7 +16,7 @@ namespace Amido.Azure.Storage.TableStorage
     /// Class TableStorageRepository
     /// </summary>
     /// <typeparam name="TEntity">The type of the T entity.</typeparam>
-    public class TableStorageRepository<TEntity> : TableEntity, ITableStorageRepository<TEntity>, ITableStorageAdminRepository, IDisposable where TEntity : class, ITableEntity, new()
+    public class TableStorageRepository<TEntity> : ITableStorageRepository<TEntity>, ITableStorageAdminRepository, IDisposable where TEntity : class, ITableEntity, new()
     {
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
@@ -47,7 +47,6 @@ namespace Amido.Azure.Storage.TableStorage
         /// <param name="cloudStorageAccount">The cloud storage account.</param>
         /// <param name="tableName">Name of the table.</param>
         protected TableStorageRepository(CloudStorageAccount cloudStorageAccount, string tableName)
-            : base(cloudStorageAccount.TableEndpoint.AbsoluteUri, cloudStorageAccount.Credentials.AccountName)
         {
             this.tableName = tableName;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
