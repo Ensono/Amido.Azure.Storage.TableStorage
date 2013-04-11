@@ -15,6 +15,6 @@ namespace Amido.Azure.Storage.TableStorage.Tests
 
         public string TestStringValue1 { get; set; }
         public string TestStringValue2 { get; set; }
-        public int TestInt32Value { get; set; }
+        public int? TestInt32Value { get; set; }
     }
 }
