@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Amido.Azure.Storage.TableStorage.Dbc;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -24,31 +25,43 @@ namespace Amido.Azure.Storage.TableStorage
 
         public void Insert(TEntity entity)
         {
+            Contract.Requires(entity != null, "entity is null");
+
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.Insert(entity)));
         }
 
         public void Delete(TEntity entity)
         {
+            Contract.Requires(entity != null, "entity is null");
+
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.Delete(entity)));
         }
 
         public void InsertOrMerge(TEntity entity)
         {
+            Contract.Requires(entity != null, "entity is null");
+
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.InsertOrMerge(entity)));
         }
 
         public void InsertOrReplace(TEntity entity)
         {
+            Contract.Requires(entity != null, "entity is null");
+
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.InsertOrReplace(entity)));
         }
 
         public void Merge(TEntity entity)
         {
+            Contract.Requires(entity != null, "entity is null");
+
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.Merge(entity)));
         }
 
         public void Replace(TEntity entity)
         {
+            Contract.Requires(entity != null, "entity is null");
+
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.Replace(entity)));
         }
 

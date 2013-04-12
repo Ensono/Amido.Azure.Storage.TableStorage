@@ -124,6 +124,7 @@ namespace Amido.Azure.Storage.TableStorage
         public TEntity FirstOrDefault(TableQuery<TEntity> query)
         {
             Contract.Requires(query != null, "query is null.");
+
             return Table.ExecuteQuery(query.Take(1)).FirstOrDefault();
         }
 
@@ -137,6 +138,7 @@ namespace Amido.Azure.Storage.TableStorage
         public TEntity First(TableQuery<TEntity> query)
         {
             Contract.Requires(query != null, "query is null.");
+
             return Table.ExecuteQuery(query.Take(1)).First();
         }
 
@@ -199,6 +201,8 @@ namespace Amido.Azure.Storage.TableStorage
         /// <exception cref="PreconditionException">If resultsPerPage is less than one.</exception>
         public PagedResults<TEntity> ListAll(int resultsPerPage, string continuationToken = null) 
         {
+            Contract.Requires(resultsPerPage > 0, "resultsPerPage is zero or less");
+
             return Query(new TableQuery<TEntity>(), resultsPerPage, continuationToken);
         }
 
@@ -210,6 +214,7 @@ namespace Amido.Azure.Storage.TableStorage
         public void Add(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
+
             var operation = TableOperation.Insert(entity);
             Table.Execute(operation, GetTableRequestOptions());
         }
@@ -222,6 +227,7 @@ namespace Amido.Azure.Storage.TableStorage
         public void Update(TEntity entity) 
         {
             Contract.Requires(entity != null, "entity is null");
+
             var operation = TableOperation.Replace(entity);
             Table.Execute(operation, GetTableRequestOptions());
         }
@@ -235,6 +241,7 @@ namespace Amido.Azure.Storage.TableStorage
         public void InsertOrReplace(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
+
             var operation = TableOperation.InsertOrReplace(entity);
             Table.Execute(operation, GetTableRequestOptions());
         }
@@ -248,6 +255,7 @@ namespace Amido.Azure.Storage.TableStorage
         public void InsertOrMerge(TEntity entity) 
         {
             Contract.Requires(entity != null, "entity is null");
+
             var operation = TableOperation.InsertOrMerge(entity);
             Table.Execute(operation, GetTableRequestOptions());
         }
@@ -259,6 +267,7 @@ namespace Amido.Azure.Storage.TableStorage
         public void Delete(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
+
             var operation = TableOperation.Delete(entity);
             Table.Execute(operation, GetTableRequestOptions());
         }
