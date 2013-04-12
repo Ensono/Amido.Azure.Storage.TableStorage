@@ -70,7 +70,13 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="BatchWriterTests.cs" />
+    <Compile Include="BatchWriterTestBase.cs" />
+    <Compile Include="BatchWriter\BatchInsertOrMergeTests.cs" />
+    <Compile Include="BatchWriter\BatchInsertOrReplaceTests.cs" />
+    <Compile Include="BatchWriter\BatchInsertTests.cs" />
+    <Compile Include="BatchWriter\BatchMergeTests.cs" />
+    <Compile Include="BatchWriter\BatchReplaceTests.cs" />
+    <Compile Include="BatchWriter\BatchDeleteTests.cs" />
     <Compile Include="Dbc\ContractTests.cs" />
     <Compile Include="TableStorageRepository\DeleteTests.cs" />
     <Compile Include="TableStorageRepository\FirstOrDefaultTests.cs" />
@@ -115,6 +121,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
