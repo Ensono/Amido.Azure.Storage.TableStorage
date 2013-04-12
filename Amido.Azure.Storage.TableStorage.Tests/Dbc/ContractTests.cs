@@ -26,6 +26,12 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Dbc
         {
             Contract.Requires(true);
         }
+
+        [TestMethod]
+        public void Should_Not_Throw_ArgumentException() 
+        {
+            Contract.Requires<ArgumentException>(true);
+        }
     }
 
     [TestClass]
@@ -50,6 +56,12 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Dbc
         {
             Contract.Assert(true);
         }
+
+        [TestMethod]
+        public void Should_Not_Throw_ArgumentException() 
+        {
+            Contract.Assert<ArgumentException>(true);
+        }
     }
 
     [TestClass]
@@ -73,6 +85,12 @@ namespace Amido.Azure.Storage.TableStorage.Tests.Dbc
         public void Should_Not_Throw_Exception() 
         {
             Contract.Ensures(true);
+        }
+
+        [TestMethod]
+        public void Should_Not_Throw_ArgumentException()
+        {
+            Contract.Ensures<ArgumentException>(true);
         }
     }
 }
