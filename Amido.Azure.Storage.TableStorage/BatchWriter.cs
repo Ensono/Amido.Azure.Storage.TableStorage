@@ -11,7 +11,7 @@ namespace Amido.Azure.Storage.TableStorage
     public class BatchWriter<TEntity> where TEntity : class, ITableEntity, new()
     {
         private const int BatchSize = 100;
-        private readonly ConcurrentQueue<Tuple<ITableEntity, TableOperation>> operations;
+        private readonly ConcurrentQueue<TableEntityOperation> operations;
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
 
@@ -19,111 +19,98 @@ namespace Amido.Azure.Storage.TableStorage
         {
             this.tableName = tableName;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
-            operations = new ConcurrentQueue<Tuple<ITableEntity, TableOperation>>();
+            operations = new ConcurrentQueue<TableEntityOperation>();
         }
 
         public void Insert(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.Insert(entity));
-            operations.Enqueue(e);
+            operations.Enqueue(new TableEntityOperation(entity, TableOperation.Insert(entity)));
         }
 
         public void Delete(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.Delete(entity));
-            operations.Enqueue(e);
+            operations.Enqueue(new TableEntityOperation(entity, TableOperation.Delete(entity)));
         }
 
         public void InsertOrMerge(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.InsertOrMerge(entity));
-            operations.Enqueue(e);
+            operations.Enqueue(new TableEntityOperation(entity, TableOperation.InsertOrMerge(entity)));
         }
 
         public void InsertOrReplace(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.InsertOrReplace(entity));
-            operations.Enqueue(e);
+            operations.Enqueue(new TableEntityOperation(entity, TableOperation.InsertOrReplace(entity)));
         }
 
         public void Merge(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.Merge(entity));
-            operations.Enqueue(e);
+            operations.Enqueue(new TableEntityOperation(entity, TableOperation.Merge(entity)));
         }
 
         public void Replace(TEntity entity)
         {
-            var e = new Tuple<ITableEntity, TableOperation>(entity, TableOperation.Replace(entity));
-            operations.Enqueue(e);
+            operations.Enqueue(new TableEntityOperation(entity, TableOperation.Replace(entity)));
         }
 
         public void Execute() 
         {
-            var count = operations.Count;
-            var toExecute = new List<Tuple<ITableEntity, TableOperation>>();
-            for(var index = 0; index < count; index++) 
+            var partitionedOperations = operations
+                .GroupBy(o => o.Entity.PartitionKey);
+
+            foreach (var partitionedOperation in partitionedOperations)
             {
-                Tuple<ITableEntity, TableOperation> operation;
-                operations.TryDequeue(out operation);
-                if(operation != null)
-                    toExecute.Add(operation);
+                var batch = 0;
+                var batchOperation = GetOperations(partitionedOperation, batch);
+                while (batchOperation.Any())
+                {
+                    var tableBatchOperation = MakeBatchOperation(batchOperation);
+
+                    ExecuteBatchWithRetries(tableBatchOperation);
+
+                    batch++;
+                    batchOperation = GetOperations(partitionedOperation, batch);
+                }
             }
-
-            toExecute
-               .GroupBy(tuple => tuple.Item1.PartitionKey)
-               .ToList()
-               .ForEach(g =>
-               {
-                   var opreations = g.ToList();
-
-                   var batch = 0;
-                   var operationBatch = GetOperations(opreations, batch);
-
-                   while(operationBatch.Any()) 
-                   {
-                       var tableBatchOperation = MakeBatchOperation(operationBatch);
-
-                       ExecuteBatchWithRetries(tableBatchOperation);
-
-                       batch++;
-                       operationBatch = GetOperations(opreations, batch);
-                   }
-               });
         }
 
         private void ExecuteBatchWithRetries(TableBatchOperation tableBatchOperation) 
         {
-            var tableRequestOptions = MakeTableRequestOptions();
+            var tableRequestOptions = new TableRequestOptions { RetryPolicy = new ExponentialRetry(TimeSpan.FromMilliseconds(2), 100) };
 
             var tableReference = cloudTableClient.GetTableReference(tableName);
             
             tableReference.ExecuteBatch(tableBatchOperation, tableRequestOptions);
         }
 
-        private static TableRequestOptions MakeTableRequestOptions() 
-        {
-            return new TableRequestOptions
-            {
-                RetryPolicy = new ExponentialRetry(TimeSpan.FromMilliseconds(2), 100)
-            };
-        }
-
-        private static TableBatchOperation MakeBatchOperation(
-            List<Tuple<ITableEntity, TableOperation>> operationsToExecute) 
+        private static TableBatchOperation MakeBatchOperation(IEnumerable<TableOperation> batchOperation) 
         {
             var tableBatchOperation = new TableBatchOperation();
-            operationsToExecute.ForEach(tuple => tableBatchOperation.Add(tuple.Item2));
+            foreach (var operation in batchOperation)
+            {
+                tableBatchOperation.Add(operation);
+            }
             return tableBatchOperation;
         }
 
-        private static List<Tuple<ITableEntity, TableOperation>> GetOperations(
-            IEnumerable<Tuple<ITableEntity, TableOperation>> opreations, int batch)
+        private static TableOperation[] GetOperations(IEnumerable<TableEntityOperation> operations, int batch)
         {
-            return opreations
+            return operations
                 .Skip(batch * BatchSize)
                 .Take(BatchSize)
-                .ToList();
+                .Select(o => o.Operation)
+                .ToArray();
+        }
+
+        private class TableEntityOperation
+        {
+            public TableEntityOperation(ITableEntity entity, TableOperation operation)
+            {
+                Entity = entity;
+                Operation = operation;
+            }
+
+            public ITableEntity Entity { get; set; }
+            public TableOperation Operation { get; set; }
         }
     }
 }
