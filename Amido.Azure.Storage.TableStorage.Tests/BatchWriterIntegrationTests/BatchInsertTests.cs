@@ -2,7 +2,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Storage;
 
-namespace Amido.Azure.Storage.TableStorage.Tests.BatchWriter
+namespace Amido.Azure.Storage.TableStorage.Tests.BatchWriterIntegrationTests
 {
     [TestClass]
     public class BatchInsertTests : BatchWriterTestBase

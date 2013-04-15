@@ -44,7 +44,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="cloudStorageAccount">The cloud storage account.</param>
         /// <param name="tableName">Name of the table.</param>
-        private TableStorageRepository(CloudStorageAccount cloudStorageAccount, string tableName)
+        public TableStorageRepository(CloudStorageAccount cloudStorageAccount, string tableName)
         {
             this.tableName = tableName;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();

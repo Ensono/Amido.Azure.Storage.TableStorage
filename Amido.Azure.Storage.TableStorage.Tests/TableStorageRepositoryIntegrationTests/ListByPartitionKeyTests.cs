@@ -3,7 +3,7 @@ using System.Linq;
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepository
+namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepositoryIntegrationTests
 {
     [TestClass]
     public class ListByPartitionKeyTests : TableStorageRepositoryTestBase

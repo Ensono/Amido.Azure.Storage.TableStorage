@@ -2,7 +2,7 @@
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepository 
+namespace Amido.Azure.Storage.TableStorage.Tests 
 {
     [TestClass]
     public class AccountConnectionTests 
