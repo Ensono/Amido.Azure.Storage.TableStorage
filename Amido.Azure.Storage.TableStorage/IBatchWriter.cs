@@ -3,7 +3,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Amido.Azure.Storage.TableStorage
 {
-    public interface IBatchWriter<TEntity>
+    public interface IBatchWriter<in TEntity>
         where TEntity : class, ITableEntity, new()
     {
         /// <summary>
