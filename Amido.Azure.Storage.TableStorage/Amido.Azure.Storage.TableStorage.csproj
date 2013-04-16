@@ -67,6 +67,7 @@
     <Compile Include="Account\AccountConnection.cs" />
     <Compile Include="BatchFailedException.cs" />
     <Compile Include="BatchWriter.cs" />
+    <Compile Include="BatchWriterBase.cs" />
     <Compile Include="CompensatingBatchWriter.cs" />
     <Compile Include="Dbc\Contract.cs" />
     <Compile Include="Dbc\ContractAssertionException.cs" />
