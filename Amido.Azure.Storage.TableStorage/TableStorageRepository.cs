@@ -50,7 +50,7 @@ namespace Amido.Azure.Storage.TableStorage
             this.tableName = tableName;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
             batchWriter = new BatchWriter<TEntity>(cloudStorageAccount, tableName);
-            compensatingBatchWriter = new CompensatingBatchWriter<TEntity>(cloudStorageAccount, tableName);
+            compensatingBatchWriter = new CompensatingBatchWriter<TEntity>(this, cloudStorageAccount, tableName);
         }
 
         /// <summary>

@@ -1,5 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using Amido.Azure.Storage.TableStorage.Dbc;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -8,28 +12,79 @@ namespace Amido.Azure.Storage.TableStorage
     public class CompensatingBatchWriter<TEntity> : ICompensatingBatchWriter<TEntity>
         where TEntity : class, ITableEntity, new()
     {
+        private readonly TableStorageRepository<TEntity> tableStorageRepository;
+        private readonly CloudStorageAccount cloudStorageAccount;
+        private readonly string tableName;
         private readonly BatchWriterHelper helper;
-        private readonly ConcurrentQueue<TableEntityOperation> operations;
+        private int operationNumber;
 
-        internal CompensatingBatchWriter(CloudStorageAccount cloudStorageAccount, string tableName)
+        internal CompensatingBatchWriter(TableStorageRepository<TEntity> tableStorageRepository, CloudStorageAccount cloudStorageAccount, string tableName)
         {
-            helper = new BatchWriterHelper(cloudStorageAccount, tableName);
-            operations = helper.Operations;
+            this.tableStorageRepository = tableStorageRepository;
+            this.cloudStorageAccount = cloudStorageAccount;
+            this.tableName = tableName;
+            helper = InitializeHelper();
         }
 
         public void Insert(TEntity entity)
         {
+            Contract.Requires(entity != null, "entity is null");
+
+            helper.Operations.Enqueue(new TableEntityOperation(operationNumber++, entity, TableOperation.Insert(entity)));
         }
 
         public void Insert(IEnumerable<TEntity> entities)
         {
+            Contract.Requires(entities != null, "entities is null");
+
+            foreach (var entity in entities) Insert(entity);
         }
 
         public void Execute()
         {
+            try
+            {
+                helper.Execute();
+            }
+            catch (Exception batchException)
+            {
+                try
+                {
+                    CompensateForFailedBatch();
+                }
+                catch (Exception compensatingException)
+                {
+                    throw new BatchFailedException("An exception occurred while attempting to execute the batch. The compensating action also failed.", false, batchException, compensatingException);
+                }
+                throw new BatchFailedException("An exception occurred while attempting to execute the batch.", true, batchException);
+            }
+
             //if success 
             //if compensated throw insert failed exception
             //if compensation fails throw inconsistednt state exception
+        }
+
+        private void CompensateForFailedBatch()
+        {
+            var entities = helper.Operations.Select(x => x.Entity).Cast<TEntity>().ToArray();
+            foreach (var entity in entities)
+            {
+                try
+                {
+                    tableStorageRepository.Delete(entity);
+                }
+                catch (StorageException ex)
+                {
+                    var webException = ex.InnerException as WebException;
+                    if (webException == null || webException.Response == null || ((HttpWebResponse)webException.Response).StatusCode != HttpStatusCode.NotFound) 
+                        throw;
+                }
+            }
+        }
+
+        private BatchWriterHelper InitializeHelper()
+        {
+            return new BatchWriterHelper(cloudStorageAccount, tableName);
         }
     }
 }

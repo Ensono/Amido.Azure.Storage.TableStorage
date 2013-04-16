@@ -7,6 +7,7 @@ namespace Amido.Azure.Storage.TableStorage
     public class BatchFailedException : Exception
     {
         public bool IsConsistent { get; private set; }
+        public Exception InnerCompensatingException { get; set; }
 
         public BatchFailedException()
         {
@@ -22,21 +23,17 @@ namespace Amido.Azure.Storage.TableStorage
         {
         }
 
-        public BatchFailedException(bool isConsistent)
-        {
-            IsConsistent = isConsistent;
-        }
-
-        public BatchFailedException(string message, bool isConsistent)
-            : base(message)
-        {
-            IsConsistent = isConsistent;
-        }
-
         public BatchFailedException(string message, bool isConsistent, Exception inner)
             : base(message, inner)
         {
             IsConsistent = isConsistent;
+        }
+
+        public BatchFailedException(string message, bool isConsistent, Exception innerBatchException, Exception innerCompensatingException)
+            : base(message, innerBatchException)
+        {
+            IsConsistent = isConsistent;
+            InnerCompensatingException = innerCompensatingException;
         }
 
         protected BatchFailedException(SerializationInfo info, StreamingContext context)
