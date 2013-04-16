@@ -15,7 +15,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// Returns an instance of the <see cref="BatchWriter"/> class.  This should be used
         /// when performing batch operations.
         /// </summary>
-        BatchWriter<TEntity> BatchWriter { get; }
+        IBatchWriter<TEntity> BatchWriter { get; }
 
         /// <summary>
         /// Returns a reference to table.

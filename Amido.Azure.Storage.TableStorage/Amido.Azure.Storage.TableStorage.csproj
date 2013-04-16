@@ -65,11 +65,15 @@
     </Compile>
     <Compile Include="Account\AccountConfiguration.cs" />
     <Compile Include="Account\AccountConnection.cs" />
+    <Compile Include="BatchFailedException.cs" />
     <Compile Include="BatchWriter.cs" />
+    <Compile Include="CompensatingBatchWriter.cs" />
     <Compile Include="Dbc\Contract.cs" />
     <Compile Include="Dbc\ContractAssertionException.cs" />
     <Compile Include="Dbc\PostconditionException.cs" />
     <Compile Include="Dbc\PreconditionException.cs" />
+    <Compile Include="IBatchWriter.cs" />
+    <Compile Include="ICompensatingBatchWriter.cs" />
     <Compile Include="Serialization\ContinuationTokenSerializer.cs" />
     <Compile Include="ITableStorageAdminRepository.cs" />
     <Compile Include="ITableStorageRepository.cs" />

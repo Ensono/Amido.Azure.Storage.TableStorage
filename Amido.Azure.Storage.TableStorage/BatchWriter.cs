@@ -9,7 +9,8 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Amido.Azure.Storage.TableStorage
 {
-    public class BatchWriter<TEntity> where TEntity : class, ITableEntity, new()
+    public class BatchWriter<TEntity> : IBatchWriter<TEntity>
+        where TEntity : class, ITableEntity, new()
     {
         private const int BatchSize = 100;
         private readonly ConcurrentQueue<TableEntityOperation> operations;
@@ -30,11 +31,19 @@ namespace Amido.Azure.Storage.TableStorage
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.Insert(entity)));
         }
 
+        public void Insert(IEnumerable<TEntity> entities)
+        {
+        }
+
         public void Delete(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
 
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.Delete(entity)));
+        }
+
+        public void Delete(IEnumerable<TEntity> entities)
+        {
         }
 
         public void InsertOrMerge(TEntity entity)
@@ -44,11 +53,19 @@ namespace Amido.Azure.Storage.TableStorage
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.InsertOrMerge(entity)));
         }
 
+        public void InsertOrMerge(IEnumerable<TEntity> entities)
+        {
+        }
+
         public void InsertOrReplace(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
 
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.InsertOrReplace(entity)));
+        }
+
+        public void InsertOrReplace(IEnumerable<TEntity> entities)
+        {
         }
 
         public void Merge(TEntity entity)
@@ -58,11 +75,19 @@ namespace Amido.Azure.Storage.TableStorage
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.Merge(entity)));
         }
 
+        public void Merge(IEnumerable<TEntity> entities)
+        {
+        }
+
         public void Replace(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
 
             operations.Enqueue(new TableEntityOperation(entity, TableOperation.Replace(entity)));
+        }
+
+        public void Replace(IEnumerable<TEntity> entities)
+        {
         }
 
         public void Execute() 

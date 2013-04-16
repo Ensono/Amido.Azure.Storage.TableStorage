@@ -19,7 +19,8 @@ namespace Amido.Azure.Storage.TableStorage
     {
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
-        private readonly Lazy<BatchWriter<TEntity>> batchWriter;
+        private readonly BatchWriter<TEntity> batchWriter;
+        private readonly CompensatingBatchWriter<TEntity> compensatingBatchWriter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableStorageRepository{TEntity}" /> class.
@@ -48,16 +49,26 @@ namespace Amido.Azure.Storage.TableStorage
         {
             this.tableName = tableName;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
-            batchWriter = new Lazy<BatchWriter<TEntity>>(() => new BatchWriter<TEntity>(cloudStorageAccount, tableName));
+            batchWriter = new BatchWriter<TEntity>(cloudStorageAccount, tableName);
+            compensatingBatchWriter = new CompensatingBatchWriter<TEntity>(cloudStorageAccount, tableName);
         }
 
         /// <summary>
         /// Returns an instance of the <see cref="BatchWriter"/> class.  This should be used
         /// when performing batch operations.
         /// </summary>
-        public BatchWriter<TEntity> BatchWriter 
+        public IBatchWriter<TEntity> BatchWriter 
         {
-            get { return batchWriter.Value; }
+            get { return batchWriter; }
+        }
+
+        /// <summary>
+        /// Returns an instance of the <see cref="BatchWriter"/> class.  This should be used
+        /// when performing batch operations.
+        /// </summary>
+        public ICompensatingBatchWriter<TEntity> CompensatingBatchWriter 
+        {
+            get { return compensatingBatchWriter; }
         }
 
         /// <summary>
