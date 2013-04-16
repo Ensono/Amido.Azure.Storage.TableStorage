@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Amido.Azure.Storage.TableStorage.Account;
 using Amido.Azure.Storage.TableStorage.Dbc;
@@ -215,6 +216,25 @@ namespace Amido.Azure.Storage.TableStorage
             Contract.Requires(resultsPerPage > 0, "resultsPerPage is zero or less");
 
             return Query(new TableQuery<TEntity>(), resultsPerPage, continuationToken);
+        }
+
+        /// <summary>
+        /// Gets all entities withing single partitions, handling continuation tokens to retrieve the full list. USE WITH CARE.
+        /// </summary>
+        /// <param name="partitionKey">The partition key</param>
+        /// <returns>Enumerated entities</returns>
+        public IEnumerable<TEntity> GatAllByPartitionKey(string partitionKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets all entities accross all partitions, handling continuation tokens to retrieve the full list. USE WITH CARE.
+        /// </summary>
+        /// <returns>Enumerated entities</returns>
+        public IEnumerable<TEntity> GatAll()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

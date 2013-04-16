@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Amido.Azure.Storage.TableStorage.Dbc;
 using Amido.Azure.Storage.TableStorage.Paging;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -134,6 +135,19 @@ namespace Amido.Azure.Storage.TableStorage
         /// <param name="resultsPerPage">The result per page.</param>
         /// <param name="continuationToken">The continuation token.</param>
         /// <returns>PagedResults{TEntity}.</returns>
-        PagedResults<TEntity> ListAll(int resultsPerPage, string continuationToken = null); 
+        PagedResults<TEntity> ListAll(int resultsPerPage, string continuationToken = null);
+
+        /// <summary>
+        /// Gets all entities withing single partitions, handling continuation tokens to retrieve the full list. USE WITH CARE.
+        /// </summary>
+        /// <param name="partitionKey">The partition key</param>
+        /// <returns>Enumerated entities</returns>
+        IEnumerable<TEntity> GatAllByPartitionKey(string partitionKey);
+
+        /// <summary>
+        /// Gets all entities accross all partitions, handling continuation tokens to retrieve the full list. USE WITH CARE.
+        /// </summary>
+        /// <returns>Enumerated entities</returns>
+        IEnumerable<TEntity> GatAll();
     }
 }
