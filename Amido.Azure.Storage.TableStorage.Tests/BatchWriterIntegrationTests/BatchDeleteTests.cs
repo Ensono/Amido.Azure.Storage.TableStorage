@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Storage;
 
@@ -10,15 +12,10 @@ namespace Amido.Azure.Storage.TableStorage.Tests.BatchWriterIntegrationTests
         [TestMethod]
         public void Should_Delete_Multiple_Batches_Accross_Partitions()
         {
-            InitializeData(2, 120);
+            InitializeData(0, 2, 120);
 
-            for (var i = 0; i < 2; i++)
-            {
-                for (var j = 0; j < 110; j++)
-                {
-                    Repository.BatchWriter.Delete(new TestEntity("PartitionKey" + i.ToString("D3"), "RowKey" + j.ToString("D3")) { ETag = "*", TestStringValue1 = "Updated" });
-                }
-            }
+            var testEntities = TestEntities();
+            Repository.BatchWriter.Delete(testEntities);
             Repository.BatchWriter.Execute();
 
             var results = GetAllEntities().ToArray();
@@ -29,19 +26,52 @@ namespace Amido.Azure.Storage.TableStorage.Tests.BatchWriterIntegrationTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(StorageException))]
-        public void Should_Delete_Multiple_Batches_Accross_Partitions_When_New_Entities_Included()
+        public void Should_Fail_Delete_Multiple_First_Batches_Accross_Partitions_When_New_Entities_Included()
         {
-            InitializeData(2, 120);
+            InitializeData(1, 2, 110);
 
+            var testEntities = TestEntities();
+            Repository.BatchWriter.Delete(testEntities);
+            try
+            {
+                Repository.BatchWriter.Execute();
+            }
+            catch (BatchFailedException ex)
+            {
+                Assert.IsTrue(ex.IsConsistent);
+                return;
+            }
+            Assert.Fail("Exception not thrown");
+        }
+
+        [TestMethod]
+        public void Should_Fail_Delete_Multiple_Subsequent_Batches_Accross_Partitions_When_New_Entities_Included()
+        {
+            InitializeData(0, 2, 105);
+
+            var testEntities = TestEntities();
+            Repository.BatchWriter.Delete(testEntities);
+            try
+            {
+                Repository.BatchWriter.Execute();
+            }
+            catch (BatchFailedException ex)
+            {
+                Assert.IsFalse(ex.IsConsistent);
+                return;
+            }
+            Assert.Fail("Exception not thrown");
+        }
+
+        private static List<TestEntity> TestEntities()
+        {
+            var testEntities = new List<TestEntity>();
             for (var i = 0; i < 2; i++)
             {
-                for (var j = 0; j < 130; j++)
-                {
-                    Repository.BatchWriter.Delete(new TestEntity("PartitionKey" + i.ToString("D3"), "RowKey" + j.ToString("D3")) { ETag = "*", TestStringValue1 = "Updated" });
-                }
+                for (var j = 0; j < 110; j++)
+                    testEntities.Add(new TestEntity("PartitionKey" + i.ToString("D3"), "RowKey" + j.ToString("D3")) { ETag = "*", TestStringValue1 = "Updated" });
             }
-            Repository.BatchWriter.Execute();
+            return testEntities;
         }
     }
 }

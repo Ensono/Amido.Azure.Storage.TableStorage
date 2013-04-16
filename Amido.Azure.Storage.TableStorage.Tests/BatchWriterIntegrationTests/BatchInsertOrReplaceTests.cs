@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,15 +10,17 @@ namespace Amido.Azure.Storage.TableStorage.Tests.BatchWriterIntegrationTests
         [TestMethod]
         public void Should_InsertOrReplace_Multiple_Batches_Accross_Partitions()
         {
-            InitializeData(2, 20);
+            InitializeData(0, 2, 20);
 
+            var testEntities = new List<TestEntity>();
             for (var i = 1; i < 3; i++)
             {
                 for (var j = 10; j < 120; j++)
                 {
-                    Repository.BatchWriter.InsertOrReplace(new TestEntity("PartitionKey" + i.ToString("D3"), "RowKey" + j.ToString("D3")) { ETag = "*", TestStringValue1 = "Updated" });
+                    testEntities.Add(new TestEntity("PartitionKey" + i.ToString("D3"), "RowKey" + j.ToString("D3")) { ETag = "*", TestStringValue1 = "Updated" });
                 }
             }
+            Repository.BatchWriter.InsertOrReplace(testEntities);
             Repository.BatchWriter.Execute();
 
             var results = GetAllEntities().ToArray();

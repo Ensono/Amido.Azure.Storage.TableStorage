@@ -81,7 +81,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// <summary>
         /// Execute batch of operations by partition in order.
         /// </summary>
-        /// <exception cref="BatchFailedException">Raised if the batch fails for any reason with IsConsisted property set to true as no compensation attempted.</exception>
+        /// <exception cref="BatchFailedException">Raised if the batch fails for any reason with IsConsisted property set to false if part of the batch has been committed.</exception>
         void Execute();
     }
 }

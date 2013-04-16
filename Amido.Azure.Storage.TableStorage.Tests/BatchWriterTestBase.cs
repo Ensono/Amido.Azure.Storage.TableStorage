@@ -18,9 +18,9 @@ namespace Amido.Azure.Storage.TableStorage.Tests
             }
         }
 
-        protected void InitializeData(int numPartitions, int numRowsPerPartition)
+        protected void InitializeData(int startPartitionNum, int numPartitions, int numRowsPerPartition)
         {
-            for (var i = 0; i < numPartitions; i++)
+            for (var i = startPartitionNum; i < startPartitionNum + numPartitions; i++)
             {
                 for (var j = 0; j < numRowsPerPartition; j++)
                 {

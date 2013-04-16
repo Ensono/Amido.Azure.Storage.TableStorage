@@ -22,11 +22,13 @@ namespace Amido.Azure.Storage.TableStorage
         }
 
         public ConcurrentQueue<TableEntityOperation> Operations { get; private set; }
+        public int BatchesComitted { get; private set; }
 
         public void Execute()
         {
             var partitionedOperations = Operations
-                .GroupBy(o => o.Entity.PartitionKey);
+                .GroupBy(o => o.Entity.PartitionKey)
+                .OrderBy(o => o.Key);
 
             foreach (var partitionedOperation in partitionedOperations)
             {
@@ -39,6 +41,7 @@ namespace Amido.Azure.Storage.TableStorage
                     ExecuteBatchWithRetries(tableBatchOperation);
 
                     batch++;
+                    BatchesComitted++;
                     batchOperation = GetOperations(partitionedOperation, batch);
                 }
             }
@@ -66,6 +69,7 @@ namespace Amido.Azure.Storage.TableStorage
         private static TableOperation[] GetOperations(IEnumerable<TableEntityOperation> operations, int batch)
         {
             return operations
+                .OrderBy(o => o.OperationNumber)
                 .Skip(batch * BatchSize)
                 .Take(BatchSize)
                 .Select(o => o.Operation)

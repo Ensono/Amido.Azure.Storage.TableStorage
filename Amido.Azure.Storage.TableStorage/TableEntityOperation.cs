@@ -4,13 +4,15 @@ namespace Amido.Azure.Storage.TableStorage
 {
     internal class TableEntityOperation
     {
-        public TableEntityOperation(ITableEntity entity, TableOperation operation)
+        public TableEntityOperation(int operationNumber, ITableEntity entity, TableOperation operation)
         {
+            OperationNumber = operationNumber;
             Entity = entity;
             Operation = operation;
         }
 
-        public ITableEntity Entity { get; set; }
-        public TableOperation Operation { get; set; }
+        public int OperationNumber { get; private set; }
+        public ITableEntity Entity { get; private set; }
+        public TableOperation Operation { get; private set; }
     }
 }

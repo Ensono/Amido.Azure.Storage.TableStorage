@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Storage;
@@ -10,13 +12,8 @@ namespace Amido.Azure.Storage.TableStorage.Tests.BatchWriterIntegrationTests
         [TestMethod]
         public void Should_Insert_Multiple_Batches_Accross_Partitions()
         {
-            for (var i = 0; i < 2; i++)
-            {
-                for (var j = 0; j < 120; j++)
-                {
-                    Repository.BatchWriter.Insert(new TestEntity("PartitionKey" + i.ToString("D3"), "RowKey" + j.ToString("D3")) { ETag = "*", TestStringValue1 = "Created" });
-                }
-            }
+            var testEntities = TestEntities();
+            Repository.BatchWriter.Insert(testEntities);
             Repository.BatchWriter.Execute();
 
             var results = GetAllEntities().ToArray();
@@ -27,19 +24,50 @@ namespace Amido.Azure.Storage.TableStorage.Tests.BatchWriterIntegrationTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(StorageException))]
-        public void Should_Fail_Insert_Batch_When_New_Entities_Included()
+        public void Should_Fail_Insert_First_Batch_When_New_Entities_Included()
         {
-            InitializeData(2, 20);
+            InitializeData(0, 2, 20);
+            var testEntities = TestEntities();
+            Repository.BatchWriter.Insert(testEntities);
+            try
+            {
+                Repository.BatchWriter.Execute();
+            }
+            catch (BatchFailedException ex)
+            {
+                Assert.IsTrue(ex.IsConsistent);
+                return;
+            }
+            Assert.Fail("Exception not thrown");
+        }
 
+        [TestMethod]
+        public void Should_Fail_Insert_Subsequent_Batch_When_New_Entities_Included()
+        {
+            InitializeData(1, 2, 20);
+            var testEntities = TestEntities();
+            Repository.BatchWriter.Insert(testEntities);
+            try
+            {
+                Repository.BatchWriter.Execute();
+            }
+            catch (BatchFailedException ex)
+            {
+                Assert.IsFalse(ex.IsConsistent);
+                return;
+            }
+            Assert.Fail("Exception not thrown");
+        }
+
+        private static IEnumerable<TestEntity> TestEntities()
+        {
+            var testEntities = new List<TestEntity>();
             for (var i = 0; i < 2; i++)
             {
                 for (var j = 0; j < 120; j++)
-                {
-                    Repository.BatchWriter.Insert(new TestEntity("PartitionKey" + i.ToString("D3"), "RowKey" + j.ToString("D3")) { ETag = "*", TestStringValue1 = "Created" });
-                }
+                    testEntities.Add(new TestEntity("PartitionKey" + i.ToString("D3"), "RowKey" + j.ToString("D3")) { ETag = "*", TestStringValue1 = "Created" });
             }
-            Repository.BatchWriter.Execute();
+            return testEntities;
         }
     }
 }
