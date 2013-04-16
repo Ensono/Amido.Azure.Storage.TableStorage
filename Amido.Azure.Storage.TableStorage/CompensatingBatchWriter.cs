@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -26,6 +25,10 @@ namespace Amido.Azure.Storage.TableStorage
             helper = InitializeHelper();
         }
 
+        /// <summary>
+        /// Insert entity into batch for execution.
+        /// </summary>
+        /// <param name="entity">Entity to insert.</param>
         public void Insert(TEntity entity)
         {
             Contract.Requires(entity != null, "entity is null");
@@ -33,6 +36,10 @@ namespace Amido.Azure.Storage.TableStorage
             helper.Operations.Enqueue(new TableEntityOperation(operationNumber++, entity, TableOperation.Insert(entity)));
         }
 
+        /// <summary>
+        /// Insert entities into batch for execution.
+        /// </summary>
+        /// <param name="entities">Entities to insert.</param>
         public void Insert(IEnumerable<TEntity> entities)
         {
             Contract.Requires(entities != null, "entities is null");
@@ -40,6 +47,10 @@ namespace Amido.Azure.Storage.TableStorage
             foreach (var entity in entities) Insert(entity);
         }
 
+        /// <summary>
+        /// Execute batch of operations by partition in order.
+        /// </summary>
+        /// <exception cref="BatchFailedException">Raised if the batch fails for any reason with IsConsisted property set to false if part of the batch has been committed.</exception>
         public void Execute()
         {
             try
@@ -58,10 +69,6 @@ namespace Amido.Azure.Storage.TableStorage
                 }
                 throw new BatchFailedException("An exception occurred while attempting to execute the batch.", true, batchException);
             }
-
-            //if success 
-            //if compensated throw insert failed exception
-            //if compensation fails throw inconsistednt state exception
         }
 
         private void CompensateForFailedBatch()
