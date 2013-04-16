@@ -8,22 +8,22 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Amido.Azure.Storage.TableStorage
 {
-    public abstract class BatchWriterBase
+    internal class BatchWriterHelper
     {
-        protected readonly ConcurrentQueue<TableEntityOperation> Operations;
-
         private const int BatchSize = 100;
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
 
-        protected BatchWriterBase(CloudStorageAccount cloudStorageAccount, string tableName)
+        public BatchWriterHelper(CloudStorageAccount cloudStorageAccount, string tableName)
         {
             this.tableName = tableName;
             cloudTableClient = cloudStorageAccount.CreateCloudTableClient();
             Operations = new ConcurrentQueue<TableEntityOperation>();
         }
 
-        protected void DoExecute()
+        public ConcurrentQueue<TableEntityOperation> Operations { get; private set; }
+
+        public void Execute()
         {
             var partitionedOperations = Operations
                 .GroupBy(o => o.Entity.PartitionKey);
@@ -70,18 +70,6 @@ namespace Amido.Azure.Storage.TableStorage
                 .Take(BatchSize)
                 .Select(o => o.Operation)
                 .ToArray();
-        }
-
-        protected class TableEntityOperation
-        {
-            public TableEntityOperation(ITableEntity entity, TableOperation operation)
-            {
-                Entity = entity;
-                Operation = operation;
-            }
-
-            public ITableEntity Entity { get; set; }
-            public TableOperation Operation { get; set; }
         }
     }
 }

@@ -18,6 +18,12 @@ namespace Amido.Azure.Storage.TableStorage
         IBatchWriter<TEntity> BatchWriter { get; }
 
         /// <summary>
+        /// Returns an instance of the <see cref="CompensatingBatchWriter"/> class.  This should be used
+        /// when performing batch operations.
+        /// </summary>
+        ICompensatingBatchWriter<TEntity> CompensatingBatchWriter { get; }
+
+        /// <summary>
         /// Returns a reference to table.
         /// </summary>
         CloudTable Table { get; }

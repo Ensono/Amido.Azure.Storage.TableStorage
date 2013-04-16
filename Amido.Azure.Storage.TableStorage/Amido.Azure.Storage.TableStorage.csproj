@@ -67,7 +67,7 @@
     <Compile Include="Account\AccountConnection.cs" />
     <Compile Include="BatchFailedException.cs" />
     <Compile Include="BatchWriter.cs" />
-    <Compile Include="BatchWriterBase.cs" />
+    <Compile Include="BatchWriterHelper.cs" />
     <Compile Include="CompensatingBatchWriter.cs" />
     <Compile Include="Dbc\Contract.cs" />
     <Compile Include="Dbc\ContractAssertionException.cs" />
@@ -81,6 +81,7 @@
     <Compile Include="Paging\PagedResults.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\IContinuationTokenSerializer.cs" />
+    <Compile Include="TableEntityOperation.cs" />
     <Compile Include="TableStorageRepository.cs" />
   </ItemGroup>
   <ItemGroup>
