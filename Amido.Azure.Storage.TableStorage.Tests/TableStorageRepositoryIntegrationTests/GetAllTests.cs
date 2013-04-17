@@ -10,7 +10,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepositoryIntegrati
         public void Should_Return_All_Entities_Accross_Partitions_When_Item_Count_Greater_Than_1000()
         {
             // Arrange
-            for (var i = 0; i < 21; i++)
+            for (var i = 0; i < 22; i++)
             {
                 for (var j = 0; j < 100; j++)
                 {
@@ -20,11 +20,13 @@ namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepositoryIntegrati
             Repository.BatchWriter.Execute();
 
             // Act
-            var results = Repository.GetAll();
+            var results = Repository.GetAll().ToList();
 
             // Assert
             Assert.IsNotNull(results);
-            Assert.AreEqual(2100, results.Count());
+            Assert.AreEqual(2200, results.Count());
+            Assert.AreEqual(100, results.Count(x => x.PartitionKey == "PartitionKey0"));
+            Assert.AreEqual(100, results.Count(x => x.PartitionKey == "PartitionKey21"));
         }
     }
 }

@@ -225,7 +225,14 @@ namespace Amido.Azure.Storage.TableStorage
         /// <returns>Enumerated entities</returns>
         public IEnumerable<TEntity> GetAllByPartitionKey(string partitionKey)
         {
-            throw new NotImplementedException();
+            var results = ListByPartitionKey(partitionKey);
+            var allEntities = results.Results;
+            while (results.HasMoreResults)
+            {
+                results = ListByPartitionKey(partitionKey, results.ContinuationToken);
+                allEntities.AddRange(results.Results);
+            }
+            return allEntities;
         }
 
         /// <summary>
@@ -241,7 +248,7 @@ namespace Amido.Azure.Storage.TableStorage
                 results = ListAll(results.ContinuationToken);
                 allEntities.AddRange(results.Results);
             }
-            return allEntities.ToArray();
+            return allEntities;
         }
 
         /// <summary>
