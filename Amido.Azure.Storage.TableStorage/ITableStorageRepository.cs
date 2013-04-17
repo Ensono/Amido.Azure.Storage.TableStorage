@@ -142,12 +142,12 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="partitionKey">The partition key</param>
         /// <returns>Enumerated entities</returns>
-        IEnumerable<TEntity> GatAllByPartitionKey(string partitionKey);
+        IEnumerable<TEntity> GetAllByPartitionKey(string partitionKey);
 
         /// <summary>
         /// Gets all entities accross all partitions, handling continuation tokens to retrieve the full list. USE WITH CARE.
         /// </summary>
         /// <returns>Enumerated entities</returns>
-        IEnumerable<TEntity> GatAll();
+        IEnumerable<TEntity> GetAll();
     }
 }

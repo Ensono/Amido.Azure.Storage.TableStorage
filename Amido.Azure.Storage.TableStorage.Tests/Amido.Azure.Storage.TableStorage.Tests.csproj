@@ -82,6 +82,7 @@
     <Compile Include="BatchWriterIntegrationTests\BatchDeleteTests.cs" />
     <Compile Include="CompensatingBatchWriterIntegrationTests\BatchInsertTests.cs" />
     <Compile Include="Dbc\ContractTests.cs" />
+    <Compile Include="TableStorageRepositoryIntegrationTests\GetAllTests.cs" />
     <Compile Include="TableStorageRepositoryIntegrationTests\DeleteTests.cs" />
     <Compile Include="TableStorageRepositoryIntegrationTests\FirstOrDefaultTests.cs" />
     <Compile Include="TableStorageRepositoryIntegrationTests\FirstTests.cs" />

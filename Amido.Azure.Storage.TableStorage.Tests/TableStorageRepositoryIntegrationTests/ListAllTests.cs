@@ -7,21 +7,10 @@ namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepositoryIntegrati
     public class ListAllTests : TableStorageRepositoryTestBase
     {
         [TestMethod]
-        [ExpectedException(typeof(PreconditionException))] // Which line throws the exception??
+        [ExpectedException(typeof(PreconditionException))]
         public void Should_Throw_PreconditionException_Invalid_ResultPerPage()
         {
-            // Arrange
-            for (var i = 0; i < 10; i++)
-            {
-                Repository.Add(new TestEntity("PartitionKey1", "RowKey" + i));
-            }
-
-            // Act
-            var results = Repository.ListAll(0);
-
-            // Assert
-            Assert.IsNotNull(results);
-            Assert.AreEqual(50, results.Results.Count);
+            Repository.ListAll(0);
         }
 
         [TestMethod]
@@ -80,11 +69,6 @@ namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepositoryIntegrati
             Assert.IsNotNull(results);
             Assert.AreEqual(1000, results.Results.Count);
             Assert.IsNotNull(results.ContinuationToken);
-            //TODO: Some XDoc type validation of the continuationtoken
-            //Assert.IsTrue(result.ContinuationToken.Contains("ResultContinuation"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("Table"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("NextPartitionKey"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("NextRowKey"));
         }
 
         [TestMethod]
@@ -110,12 +94,6 @@ namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepositoryIntegrati
             Assert.AreEqual(resultPerPage, result.Results.Count);
             Assert.IsTrue(result.HasMoreResults);
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.ContinuationToken));
-
-            //TODO: Some XDoc type validation of the continuationtoken
-            //Assert.IsTrue(result.ContinuationToken.Contains("ResultContinuation"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("Table"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("NextPartitionKey"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("NextRowKey"));
         }
 
         [TestMethod]
@@ -141,11 +119,6 @@ namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepositoryIntegrati
             Assert.AreEqual(resultPerPage, result.Results.Count);
             Assert.IsTrue(result.HasMoreResults);
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.ContinuationToken));
-            //TODO: Some XDoc type validation of the continuationtoken
-            //Assert.IsTrue(result.ContinuationToken.Contains("ResultContinuation"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("Table"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("NextPartitionKey"));
-            //Assert.IsTrue(result.ContinuationToken.Contains("NextRowKey"));
 
             // Act
             result = Repository.ListAll(resultPerPage, result.ContinuationToken);

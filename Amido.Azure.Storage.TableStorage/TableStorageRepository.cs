@@ -223,7 +223,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// </summary>
         /// <param name="partitionKey">The partition key</param>
         /// <returns>Enumerated entities</returns>
-        public IEnumerable<TEntity> GatAllByPartitionKey(string partitionKey)
+        public IEnumerable<TEntity> GetAllByPartitionKey(string partitionKey)
         {
             throw new NotImplementedException();
         }
@@ -232,9 +232,16 @@ namespace Amido.Azure.Storage.TableStorage
         /// Gets all entities accross all partitions, handling continuation tokens to retrieve the full list. USE WITH CARE.
         /// </summary>
         /// <returns>Enumerated entities</returns>
-        public IEnumerable<TEntity> GatAll()
+        public IEnumerable<TEntity> GetAll()
         {
-            throw new NotImplementedException();
+            var results = ListAll();
+            var allEntities = results.Results;
+            while (results.HasMoreResults)
+            {
+                results = ListAll(results.ContinuationToken);
+                allEntities.AddRange(results.Results);
+            }
+            return allEntities.ToArray();
         }
 
         /// <summary>

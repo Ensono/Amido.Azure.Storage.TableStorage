@@ -10,7 +10,7 @@ namespace Amido.Azure.Storage.TableStorage.Tests.TableStorageRepositoryIntegrati
     {
         [TestMethod]
         [ExpectedException(typeof(PreconditionException))]
-        public void Should_Throw_PreconditionException_If_PartiionKey_Null()
+        public void Should_Throw_PreconditionException_If_PartitionKey_Null()
         {
             Repository.ListByPartitionKey(null);
         }
