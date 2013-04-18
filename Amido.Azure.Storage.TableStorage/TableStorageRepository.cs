@@ -236,7 +236,7 @@ namespace Amido.Azure.Storage.TableStorage
         }
 
         /// <summary>
-        /// Gets all entities accross all partitions, handling continuation tokens to retrieve the full list. USE WITH CARE.
+        /// Gets all entities across all partitions, handling continuation tokens to retrieve the full list. USE WITH CARE.
         /// </summary>
         /// <returns>Enumerated entities</returns>
         public IEnumerable<TEntity> GetAll()
