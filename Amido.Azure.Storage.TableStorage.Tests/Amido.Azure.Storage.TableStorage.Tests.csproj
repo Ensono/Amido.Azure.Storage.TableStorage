@@ -95,7 +95,6 @@
     <Compile Include="TableStorageRepositoryIntegrationTests\QueryTest.cs" />
     <Compile Include="TableStorageRepositoryTests.cs" />
     <Compile Include="TableStorageRepositoryTestBase.cs" />
-    <Compile Include="TableStorageRepositoryUnitTests.cs" />
     <Compile Include="TestEntity.cs" />
     <Compile Include="AccountConnectionTests.cs" />
     <Compile Include="TableStorageRepositoryIntegrationTests\UpdateTests.cs" />
