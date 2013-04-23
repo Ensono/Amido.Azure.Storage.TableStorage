@@ -130,6 +130,7 @@ namespace Amido.Azure.Storage.TableStorage
         /// <summary>
         /// Returns the first item matching the query, or null of none found.
         /// </summary>
+        /// <remarks>Handles continuation tokens (see http://blog.smarx.com/posts/windows-azure-tables-expect-continuation-tokens-seriously )</remarks>
         /// <param name="query">The query.</param>
         /// <returns>The first item found or null if none.</returns>
         /// <exception cref="PreconditionException">If query object is null.</exception>
@@ -137,12 +138,19 @@ namespace Amido.Azure.Storage.TableStorage
         {
             Contract.Requires(query != null, "query is null.");
 
-            return Table.ExecuteQuery(query.Take(1)).FirstOrDefault();
+            var results = Query(query.Take(1));
+            while (!results.Results.Any() && results.HasMoreResults)
+            {
+                results = Query(query.Take(1));
+            }
+
+            return results.Results.FirstOrDefault();
         }
 
         /// <summary>
         /// Returns the first item matching the query.
         /// </summary>
+        /// <remarks>Handles continuation tokens (see http://blog.smarx.com/posts/windows-azure-tables-expect-continuation-tokens-seriously )</remarks>
         /// <param name="query">The query.</param>
         /// <returns>The first item found.</returns>
         /// <exception cref="PreconditionException">If query object is null.</exception>
@@ -151,7 +159,13 @@ namespace Amido.Azure.Storage.TableStorage
         {
             Contract.Requires(query != null, "query is null.");
 
-            return Table.ExecuteQuery(query.Take(1)).First();
+            var results = Query(query.Take(1));
+            while (!results.Results.Any() && results.HasMoreResults)
+            {
+                results = Query(query.Take(1));
+            }
+
+            return results.Results.First();
         }
 
         /// <summary>
