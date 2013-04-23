@@ -9,6 +9,7 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.RetryPolicies;
 using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.WindowsAzure.Storage.Table.DataServices;
 
 namespace Amido.Azure.Storage.TableStorage
 {
@@ -16,7 +17,7 @@ namespace Amido.Azure.Storage.TableStorage
     /// Class TableStorageRepository
     /// </summary>
     /// <typeparam name="TEntity">The type of the T entity.</typeparam>
-    public class TableStorageRepository<TEntity> : ITableStorageRepository<TEntity>, ITableStorageAdminRepository where TEntity : class, ITableEntity, new()
+    public class TableStorageRepository<TEntity> : ITableStorageRepository<TEntity>, ITableStorageAdminRepository, IQueryableRepository<TEntity> where TEntity : class, ITableEntity, new()
     {
         private readonly string tableName;
         private readonly CloudTableClient cloudTableClient;
@@ -150,7 +151,7 @@ namespace Amido.Azure.Storage.TableStorage
         public TEntity First(TableQuery<TEntity> query)
         {
             Contract.Requires(query != null, "query is null.");
-
+            
             return Table.ExecuteQuery(query.Take(1)).First();
         }
 
@@ -354,6 +355,12 @@ namespace Amido.Azure.Storage.TableStorage
                                                  : serializer.SerializeToken(querySegment.ContinuationToken);
             pagedResults.HasMoreResults = querySegment.ContinuationToken != null;
             return pagedResults;
+        }
+
+        public IQueryable<TEntity> GetByPartition(string partitionKey)
+        {
+            var serviceContext = new TableServiceContext(cloudTableClient);
+            return serviceContext.CreateQuery<TEntity>(typeof(TEntity).Name).Where(x => x.PartitionKey.Equals(partitionKey));
         }
 
         /// <summary>

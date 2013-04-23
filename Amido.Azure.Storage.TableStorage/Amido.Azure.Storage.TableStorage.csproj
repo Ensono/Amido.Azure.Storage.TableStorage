@@ -75,6 +75,7 @@
     <Compile Include="Dbc\PreconditionException.cs" />
     <Compile Include="IBatchWriter.cs" />
     <Compile Include="ICompensatingBatchWriter.cs" />
+    <Compile Include="IQueryableRepository.cs" />
     <Compile Include="Serialization\ContinuationTokenSerializer.cs" />
     <Compile Include="ITableStorageAdminRepository.cs" />
     <Compile Include="ITableStorageRepository.cs" />
